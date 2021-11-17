@@ -1,9 +1,11 @@
 import { CONTACTS } from '../json/contacts.json';
+import { CHAT } from '../json/chat.json';
+
 /**
  * @constant json
  * @description common model Constants
  */
-const COMMON = { CONTACTS };
+const COMMON = { CONTACTS, CHAT };
 
 /**
  * @exports DataTable constants

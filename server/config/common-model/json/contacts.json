@@ -43,7 +43,7 @@
           "KEY": "page_offset"
         }
       ],
-      "SQL": "select * from contacts inner join fos_user on fos_user.id = contacts.friend_id where user_id =  ? #filters# ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
+      "SQL": "select fos_user.* from contacts inner join fos_user on fos_user.id = contacts.friend_id where user_id =  ? #filters# ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
     },
     "CONTACTS_SEARCH_GET": {
       "PARAMS": [
@@ -56,7 +56,7 @@
           "KEY": "username"
         }
       ],
-      "SQL": "select * from contacts inner join fos_user on fos_user.id = contacts.friend_id where user_id =  ? and username like ?"
+      "SQL": "select fos_user.* from contacts inner join fos_user on fos_user.id = contacts.friend_id where user_id =  ? and username like ?"
     }
   }
 }

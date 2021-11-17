@@ -1,5 +1,5 @@
 import express from 'express';
-import { contactsroute } from '../../routes/v1';
+import { contactsroute, chatroute } from '../../routes/v1';
 
 /**
  * @type function
@@ -8,6 +8,8 @@ import { contactsroute } from '../../routes/v1';
 export default () => {
   const api = express.Router();
   const contactsapi = contactsroute(api);
+  const chatapi = chatroute(api);
+
   // perhaps expose some API metadata at the root
   api.get('/', (req, res) => {
     res.json({

@@ -1,0 +1,67 @@
+{
+  "CHAT": {
+    "CHAT_CHEXK_EXIST": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "friend_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "friend_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "select * from chat where (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)",
+      "RESULT": "SINGLE"
+    },
+    "CHAT_CREATE": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "friend_id"
+        }
+      ],
+      "SQL": "INSERT INTO chat (user_id, friend_id) VALUES (?, ?)"
+    },
+    "CHAT_DETAIL": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_chat_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        }
+      ],
+      "SQL": "select chat.* from chat inner join fos_user on fos_user.id = ? where chat.id = ?",
+      "RESULT": "SINGLE"
+    },
+    "CHAT_USER_DETAIL": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_chat_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        }
+      ],
+      "SQL": "select fos_user.* from chat inner join fos_user on fos_user.id = ? where chat.id = ?",
+      "RESULT": "SINGLE"
+    }
+  }
+}

@@ -4,7 +4,7 @@
     "PORT": 3306,
     "DB": "agrideo_live",
     "USER": "root",
-    "PASSWORD": "password",
+    "PASSWORD": "",
     "SSL": false
   }
 }
