@@ -1,0 +1,11 @@
+{
+    "scripts": {
+      "compile": [
+        "chmod -R 777 server/",
+        "chmod -R 777 server/public",
+        "chmod -R 777 server/public/tempfiles",
+        "chmod -R 777 server/public/images",
+        "chmod -R 777 server/public/images/campaign"
+      ]
+    }
+  }

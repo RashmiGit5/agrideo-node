@@ -1,0 +1,10 @@
+{
+  "CONTACTS_DATATABLE_CONSTANTS": {
+    "SORT_FIELD": "connected_on",
+    "SORT_VALUE": "desc",
+    "PAGE_SIZE": 10,
+    "COLUMNS": [
+      "connected_on"
+    ]
+  }
+}

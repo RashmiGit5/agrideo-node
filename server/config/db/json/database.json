@@ -1,0 +1,10 @@
+{
+  "DB_LOCAL_CONSTANTS": {
+    "HOST": "localhost",
+    "PORT": 3306,
+    "DB": "agrideo_live",
+    "USER": "root",
+    "PASSWORD": "password",
+    "SSL": false
+  }
+}

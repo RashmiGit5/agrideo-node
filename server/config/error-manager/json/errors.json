@@ -1,0 +1,114 @@
+{
+  "ERRORS": {
+    "DATABASE_CONNECTION_FAILED": {
+      "CODE": 1,
+      "DEFAULT_MESSAGE": "Database connection failed",
+      "HTTP_CODE": 500
+    },
+    "DATABASE_QUERY_ERROR": {
+      "CODE": 2,
+      "DEFAULT_MESSAGE": "Database query failed",
+      "HTTP_CODE": 500
+    },
+    "EXCEPTION_THROWN": {
+      "CODE": 3,
+      "DEFAULT_MESSAGE": "Exception thrown",
+      "HTTP_CODE": 500
+    },
+    "USER_ADD": {
+      "CODE": 4,
+      "DEFAULT_MESSAGE": "User Added Successfully.",
+      "HTTP_CODE": 200
+    },
+    "USER_NOT_FOUND": {
+      "CODE": 5,
+      "DEFAULT_MESSAGE": "User Not Found.",
+      "HTTP_CODE": 404
+    },
+    "USER_EXIST": {
+      "CODE": 6,
+      "DEFAULT_MESSAGE": "Email Or user name already exists.",
+      "HTTP_CODE": 400
+    },
+    "PASSWORD_IS_INVALID": {
+      "CODE": 7,
+      "DEFAULT_MESSAGE": "There is no match for provided parameters",
+      "HTTP_CODE": 404
+    },
+    "SERVICE_ERROR": {
+      "CODE": 8,
+      "DEFAULT_MESSAGE": "Error happend related to the third party service",
+      "HTTP_CODE": 500
+    },
+    "SYSTEM_ERROR": {
+      "CODE": 9,
+      "DEFAULT_MESSAGE": "Internal system error occured",
+      "HTTP_CODE": 500
+    },
+    "CONNECTION_ERROR": {
+      "CODE": 10,
+      "DEFAULT_MESSAGE": "Connection to provided system failed",
+      "HTTP_CODE": 500
+    },
+    "DATA_NOT_FOUND": {
+      "CODE": 11,
+      "DEFAULT_MESSAGE": "Data is not found",
+      "HTTP_CODE": 404
+    },
+    "ACCESS_DENIED": {
+      "CODE": 12,
+      "DEFAULT_MESSAGE": "Access denied for specified operation",
+      "HTTP_CODE": 401
+    },
+    "TOKEN_MISSING": {
+      "CODE": 13,
+      "DEFAULT_MESSAGE": "Token Missing.",
+      "HTTP_CODE": 400
+    },
+    "TOKEN_INVALID": {
+      "CODE": 14,
+      "DEFAULT_MESSAGE": "Invalid Auth Token.",
+      "HTTP_CODE": 400
+    },
+    "TOKEN_EXPIRED": {
+      "CODE": 15,
+      "DEFAULT_MESSAGE": "Token Expired.",
+      "HTTP_CODE": 400
+    },
+    "APIKEY_INVALID": {
+      "CODE": 16,
+      "DEFAULT_MESSAGE": "Apikey is invalid or missing.",
+      "HTTP_CODE": 400
+    },
+    "ACCESS_TOKEN_INVALID": {
+      "CODE": 17,
+      "DEFAULT_MESSAGE": "Access token is invalid.",
+      "HTTP_CODE": 401
+    },
+    "ACCESS_TOKEN_EXPIRED": {
+      "CODE": 18,
+      "DEFAULT_MESSAGE": "Access token is expired.",
+      "HTTP_CODE": 401
+    },
+    "ACCESS_TOKEN_MISSING": {
+      "CODE": 19,
+      "DEFAULT_MESSAGE": "Access token is missing.",
+      "HTTP_CODE": 401
+    },
+    "FILE_MISSING": {
+      "CODE": 20,
+      "DEFAULT_MESSAGE": "File is missing",
+      "HTTP_CODE": 400
+    },
+    "INVALID_CREDANTIAL": {
+      "CODE": 21,
+      "DEFAULT_MESSAGE": "Invalid username and password.",
+      "HTTP_CODE": 400
+    },
+    "PASSWORD_MATCH": {
+      "CODE": 22,
+      "DEFAULT_MESSAGE": "New password must be differ than old password.",
+      "HTTP_CODE": 400
+    }
+  }
+}

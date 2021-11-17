@@ -1,0 +1,62 @@
+{
+  "CONTACTS": {
+    "CONTACTS_PAGGING_COUNT_GET": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "filter",
+          "KEY": "filters",
+          "FILTER_PREFIX": " AND "
+        }
+      ],
+      "SQL": "select count(*) as count from contacts inner join fos_user on fos_user.id = contacts.friend_id where user_id =  ? #filters#;",
+      "RESULT": "SINGLE"
+    },
+    "CONTACTS_PAGGING_GET": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "filter",
+          "KEY": "filters",
+          "FILTER_PREFIX": " AND "
+        },
+        {
+          "TYPE": "sort",
+          "KEY": "sort_by"
+        },
+        {
+          "TYPE": "sort",
+          "KEY": "sort_order"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "page_size"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "page_offset"
+        }
+      ],
+      "SQL": "select * from contacts inner join fos_user on fos_user.id = contacts.friend_id where user_id =  ? #filters# ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
+    },
+    "CONTACTS_SEARCH_GET": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "string",
+          "KEY": "username"
+        }
+      ],
+      "SQL": "select * from contacts inner join fos_user on fos_user.id = contacts.friend_id where user_id =  ? and username like ?"
+    }
+  }
+}
