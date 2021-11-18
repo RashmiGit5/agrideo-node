@@ -2,5 +2,9 @@
     "API_CONFIG": {
         "FRONTEND_URL": "",
         "API_URL": "http://192.168.0.7:9010"
+    },
+    "CHAT_MESSAGE_TYPE": {
+        "TEXT": "text",
+        "ATTACHMENT": "attachment"
     }
 }

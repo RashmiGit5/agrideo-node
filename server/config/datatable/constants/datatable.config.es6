@@ -1,11 +1,11 @@
-import { CONTACTS_DATATABLE_CONSTANTS } from '../json/datatable';
+import { CONTACTS_DATATABLE_CONSTANTS, CHAT_MESSAGE_DATATABLE_CONSTANTS, CHAT_DATATABLE_CONSTANTS } from '../json/datatable';
 
 
 /**ƒ
  * @constant json
  * @description DataTable Constants
  */
-const DATATABLE = { CONTACTS_DATATABLE_CONSTANTS };
+const DATATABLE = { CONTACTS_DATATABLE_CONSTANTS, CHAT_MESSAGE_DATATABLE_CONSTANTS, CHAT_DATATABLE_CONSTANTS };
 
 /**
  * @exports DataTable constants

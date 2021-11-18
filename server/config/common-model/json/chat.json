@@ -1,6 +1,6 @@
 {
   "CHAT": {
-    "CHAT_CHEXK_EXIST": {
+    "CHAT_CHECK_EXIST": {
       "PARAMS": [
         {
           "TYPE": "number",
@@ -35,18 +35,37 @@
       ],
       "SQL": "INSERT INTO chat (user_id, friend_id) VALUES (?, ?)"
     },
-    "CHAT_DETAIL": {
+    "CHAT_USER_STATUS_GET": {
       "PARAMS": [
         {
           "TYPE": "number",
-          "KEY": "user_chat_id"
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "select * from chat_user_status where user_id = ?",
+      "RESULT": "SINGLE"
+    },
+    "CHAT_USER_STATUS_CREATE": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
         },
+        {
+          "TYPE": "number",
+          "KEY": "user_status"
+        }
+      ],
+      "SQL": "INSERT INTO chat_user_status (user_id, user_status) VALUES (?, ?)"
+    },
+    "CHAT_DETAIL": {
+      "PARAMS": [
         {
           "TYPE": "number",
           "KEY": "chat_id"
         }
       ],
-      "SQL": "select chat.* from chat inner join fos_user on fos_user.id = ? where chat.id = ?",
+      "SQL": "select * from chat where chat.id = ?",
       "RESULT": "SINGLE"
     },
     "CHAT_USER_DETAIL": {
@@ -54,14 +73,147 @@
         {
           "TYPE": "number",
           "KEY": "user_chat_id"
+        }
+      ],
+      "SQL": "select fos_user.*, chat_user_status.user_status as chat_user_status from fos_user inner join chat_user_status on chat_user_status.user_id = fos_user.id where fos_user.id = ?",
+      "RESULT": "SINGLE"
+    },
+    "CHAT_PAGGING_GET": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "sort",
+          "KEY": "sort_by"
+        },
+        {
+          "TYPE": "sort",
+          "KEY": "sort_order"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "page_size"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "page_offset"
+        }
+      ],
+      "SQL": "select * from chat where user_id = ? OR friend_id = ? #filters# ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
+    },
+    "CHAT_PAGGING_COUNT_GET": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "page_size"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "page_offset"
+        }
+      ],
+      "SQL": "select count(*) as count from chat where user_id = ? OR friend_id = ? LIMIT ? OFFSET ?",
+      "RESULT": "SINGLE"
+    },
+    "CHAT_SEND_MESSAGE": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        },
+        {
+          "TYPE": "string",
+          "KEY": "msg"
+        },
+        {
+          "TYPE": "string",
+          "KEY": "attachment_url"
+        },
+        {
+          "TYPE": "string",
+          "KEY": "attachment_type"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "sender_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "msg_status"
+        }
+      ],
+      "SQL": "INSERT INTO chat_message (chat_id, msg, attachment_url, attachment_type, sender_id, msg_status) VALUES (?, ?, ?, ?, ?, ?)",
+      "RESULT": "SINGLE"
+    },
+    "CHAT_UPDATE_LAST_MSG": {
+      "PARAMS": [
+        {
+          "TYPE": "string",
+          "KEY": "msg_type"
+        },
+        {
+          "TYPE": "string",
+          "KEY": "msg"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "sender_id"
         },
         {
           "TYPE": "number",
           "KEY": "chat_id"
         }
       ],
-      "SQL": "select fos_user.* from chat inner join fos_user on fos_user.id = ? where chat.id = ?",
+      "SQL": "update chat set msg_type= ?, msg_text=?, sender_id=?, last_msg_at=now() where id = ?",
       "RESULT": "SINGLE"
+    },
+    "CHAT_MESSAGE_GET": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "page_size"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "page_offset"
+        }
+      ],
+      "SQL": "select * from chat_message where chat_id = ? and (delete_status = 0 OR (delete_status = 1 AND sender_id != ?)) order by id desc LIMIT ? OFFSET ?"
+    },
+    "CHAT_MESSAGE_DELETE": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "status"
+        },
+        {
+          "TYPE": "numberarray",
+          "KEY": "messages_id"
+        }
+      ],
+      "SQL": "update chat_message set delete_status = ?, modified_at = now()  where id in (?)"
     }
   }
 }

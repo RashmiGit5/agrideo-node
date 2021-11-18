@@ -6,5 +6,15 @@
     "COLUMNS": [
       "connected_on"
     ]
+  },
+  "CHAT_DATATABLE_CONSTANTS": {
+    "SORT_VALUE": "desc",
+    "PAGE_SIZE": 10,
+    "COLUMNS": [
+      "last_msg_at"
+    ]
+  },
+  "CHAT_MESSAGE_DATATABLE_CONSTANTS": {
+    "PAGE_SIZE": 10
   }
 }

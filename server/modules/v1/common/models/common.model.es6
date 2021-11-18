@@ -80,6 +80,10 @@ const makeSqlParams = (request, data) => {
         params.push((data[field.KEY] !== '' && !isNaN(data[field.KEY])) ? parseFloat(data[field.KEY]) : null);
       }
 
+      if (field.TYPE === "numberarray") {
+        params.push(data[field.KEY]);
+      }
+
       if (field.TYPE === "date") {
         if (field.CURRENT) {
           params.push(getDate());

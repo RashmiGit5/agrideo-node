@@ -1,0 +1,17 @@
+{
+  "USER": {
+    "USER_UPDATE_STATUS": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "status"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "update chat_user_status set user_status = ?, modified_at = now() where user_id = ?"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { API_CONFIG } from '../json/general';
+import { API_CONFIG, CHAT_MESSAGE_TYPE } from '../json/general';
 
 /**
  * @constant general configs
@@ -15,6 +15,7 @@ const GENERAL = {
 	},
 	FRONTEND_URL: API_CONFIG.FRONTEND_URL,
 	API_URL: API_CONFIG.API_URL,
+	CHAT_MESSAGE_TYPE: CHAT_MESSAGE_TYPE,
 	SERVICE_FIELDS: {
 		SERVICE_URL: '#service-url#' // replace tag for html templates 
 	},
