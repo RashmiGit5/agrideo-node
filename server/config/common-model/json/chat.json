@@ -66,7 +66,9 @@
         }
       ],
       "SQL": "select * from chat where chat.id = ?",
-      "RESULT": "SINGLE"
+      "RESULT": "SINGLE",
+      "VALIDATION": "NOT_EXISTS",
+      "ERROR_CODE": "DATA_NOT_FOUND"
     },
     "CHAT_USER_DETAIL": {
       "PARAMS": [
@@ -76,7 +78,9 @@
         }
       ],
       "SQL": "select fos_user.*, chat_user_status.user_status as chat_user_status from fos_user inner join chat_user_status on chat_user_status.user_id = fos_user.id where fos_user.id = ?",
-      "RESULT": "SINGLE"
+      "RESULT": "SINGLE",
+      "VALIDATION": "NOT_EXISTS",
+      "ERROR_CODE": "DATA_NOT_FOUND"
     },
     "CHAT_PAGGING_GET": {
       "PARAMS": [
@@ -213,7 +217,38 @@
           "KEY": "messages_id"
         }
       ],
-      "SQL": "update chat_message set delete_status = ?, modified_at = now()  where id in (?)"
+      "SQL": "update chat_message set delete_status = ?, modified_at = now()  where id in (?)",
+      "VALIDATION": "NOT_EXISTS",
+      "ERROR_CODE": "DATA_NOT_FOUND"
+    },
+    "CHAT_LIST_SEARCH": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "string",
+          "KEY": "search_key"
+        },
+        {
+          "TYPE": "string",
+          "KEY": "search_key"
+        },
+        {
+          "TYPE": "string",
+          "KEY": "search_key"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "SELECT chat.* from chat INNER JOIN fos_user ON (fos_user.id = chat.user_id OR fos_user.id = chat.friend_id) AND fos_user.id != ? WHERE (chat.msg_text LIKE ? OR fos_user.first_name LIKE ? OR fos_user.last_name LIKE ?) AND (chat.user_id = ? OR chat.friend_id = ?);"
     }
   }
 }

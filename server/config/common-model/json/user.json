@@ -1,5 +1,16 @@
 {
   "USER": {
+    "USER_CHECK_IN_STATUS": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "select * from chat_user_status where user_id = ?",
+      "VALIDATION": "NOT_EXISTS",
+      "ERROR_CODE": "USER_NOT_FOUND"
+    },
     "USER_UPDATE_STATUS": {
       "PARAMS": [
         {
@@ -12,6 +23,38 @@
         }
       ],
       "SQL": "update chat_user_status set user_status = ?, modified_at = now() where user_id = ?"
+    },
+    "USER_CHECK_IN_CHAT": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "friend_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "friend_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        }
+      ],
+      "SQL": "select * from chat where (user_id = ? OR friend_id = ?) AND id = ?",
+      "VALIDATION": "NOT_EXISTS",
+      "ERROR_CODE": "USER_NOT_FOUND"
+    },
+    "USER_BLOCK_UNBLOCK": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "friend_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        }
+      ],
+      "SQL": "update chat set blocked_uid = ? where id = ?"
     }
   }
 }

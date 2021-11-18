@@ -159,7 +159,7 @@ const chatPaggingListGet = (req, res) => {
             commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { user_chat_id }, (err, res) => {
               if (!err) {
                 chatListData[count].user = res
-                modifiedChatData.push(chatListData)
+                modifiedChatData.push(chatListData[count])
               }
               count++
               call(err, res)
@@ -168,6 +168,54 @@ const chatPaggingListGet = (req, res) => {
           () => {
             response.chat = modifiedChatData
             callback(null, response)
+          }
+        )
+      }
+    ],
+      (err, response) => {
+        // err if validation fail
+        if (err) {
+          httpResponse.sendFailer(res, err.code, err);
+          return;
+        } else {
+          httpResponse.sendSuccess(res, response);
+        }
+      });
+  } catch (err) {
+    httpResponse.sendFailer(res, 500);
+  }
+}
+
+/**
+ * @type function
+ * @description Chat list search
+ * @param (object) req : Request information from route()
+ * @param (object) res : Response the result(filename)
+ * @return (undefined)
+ */
+const chatListSearch = (req, res) => {
+  try {
+    let data = _.assign(req.body, req.query, req.params, req.jwt);
+    data.search_key = `%${data.search_key}%`
+    async.waterfall([
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_LIST_SEARCH" }, data, callback),
+      (response, callback) => {
+        let chatListData = response || [], count = 0, modifiedChatData = []
+        async.whilst(
+          () => { return count < chatListData.length },
+          (call) => {
+            let user_chat_id = chatListData[count].user_id === data.user_id ? chatListData[count].friend_id : chatListData[count].user_id
+            commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { user_chat_id }, (err, res) => {
+              if (!err) {
+                chatListData[count].user = res
+                modifiedChatData.push(chatListData[count])
+              }
+              count++
+              call(err, res)
+            })
+          },
+          () => {
+            callback(null, modifiedChatData)
           }
         )
       }
@@ -277,4 +325,4 @@ const chatMessageDelete = (req, res) => {
   }
 }
 
-export { chatCreate, chatDetail, chatUserDetail, chatPaggingListGet, chatSendMsg, chatMessageGet, chatMessageDelete };
+export { chatCreate, chatDetail, chatUserDetail, chatPaggingListGet, chatListSearch, chatSendMsg, chatMessageGet, chatMessageDelete };
