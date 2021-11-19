@@ -197,6 +197,10 @@
         },
         {
           "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
           "KEY": "page_size"
         },
         {
@@ -204,7 +208,7 @@
           "KEY": "page_offset"
         }
       ],
-      "SQL": "select * from chat_message where chat_id = ? and (delete_status = 0 OR (delete_status = 1 AND sender_id != ?)) order by id desc LIMIT ? OFFSET ?"
+      "SQL": "select * from chat_message where chat_id = ? and (delete_status = 0 OR (delete_status = 1 AND sender_id != ?) OR (delete_status = 2 AND sender_id = ?)) order by id desc LIMIT ? OFFSET ?"
     },
     "CHAT_MESSAGE_DELETE": {
       "PARAMS": [

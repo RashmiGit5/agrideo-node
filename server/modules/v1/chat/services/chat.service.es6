@@ -277,10 +277,11 @@ const chatMessageGet = (req, res) => {
   try {
     let setting = getDataTableSetting(_.assign(req.body, req.query), DATATABLE.CHAT_MESSAGE_DATATABLE_CONSTANTS);
     let data = _.assign(req.body, req.query, req.params, req.jwt, setting);
-    async.series([
+    async.waterfall([
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_GET" }, data, callback)
     ],
       (err, response) => {
+        console.log("response ------> " + JSON.stringify(response));
         // err if validation fail
         if (err) {
           httpResponse.sendFailer(res, err.code, err);
@@ -308,7 +309,7 @@ const chatMessageDelete = (req, res) => {
       httpResponse.sendFailer(res, 400);
       return
     }
-    async.series([
+    async.waterfall([
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_DELETE" }, data, callback)
     ],
       (err, response) => {
