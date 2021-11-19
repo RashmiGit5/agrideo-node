@@ -277,17 +277,21 @@ const chatMessageGet = (req, res) => {
   try {
     let setting = getDataTableSetting(_.assign(req.body, req.query), DATATABLE.CHAT_MESSAGE_DATATABLE_CONSTANTS);
     let data = _.assign(req.body, req.query, req.params, req.jwt, setting);
-    async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_GET" }, data, callback)
+    async.series([
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_COUNT_GET" }, data, callback),
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_GET" }, data, callback),
     ],
       (err, response) => {
-        console.log("response ------> " + JSON.stringify(response));
         // err if validation fail
         if (err) {
           httpResponse.sendFailer(res, err.code, err);
           return;
         } else {
-          httpResponse.sendSuccess(res, response);
+          let result = {
+            count: (response[0] || {}).count,
+            chat: response[1]
+          }
+          httpResponse.sendSuccess(res, result);
         }
       });
   } catch (err) {
