@@ -232,16 +232,14 @@
       "PARAMS": [
         {
           "TYPE": "number",
-          "KEY": "status"
+          "KEY": "msg_status"
         },
         {
           "TYPE": "numberarray",
-          "KEY": "messages_id"
+          "KEY": "chat_messages_id"
         }
       ],
-      "SQL": "update chat_message set delete_status = ?, modified_at = now()  where id in (?)",
-      "VALIDATION": "NOT_EXISTS",
-      "ERROR_CODE": "DATA_NOT_FOUND"
+      "SQL": "update chat_message set delete_status = ?, modified_at = now()  where id in (?)"
     },
     "CHAT_LIST_SEARCH": {
       "PARAMS": [

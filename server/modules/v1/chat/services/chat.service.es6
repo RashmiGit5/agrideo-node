@@ -313,8 +313,31 @@ const chatMessageDelete = (req, res) => {
       httpResponse.sendFailer(res, 400);
       return
     }
+
+    let sentMsg = [], receivedMsg = [], deleteMsgStatus = 1
+
+    if (data.deleted_for_everyone) {
+      deleteMsgStatus = 3
+      sentMsg = data.messages_id.map(ele => ele.id)
+    } else {
+      data.messages_id.forEach(element => {
+        if (element.sender_id === data.user_id) {
+          sentMsg.push(element.id)
+        } else {
+          receivedMsg.push(element.id)
+        }
+      });
+    }
+
     async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_DELETE" }, data, callback)
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_DELETE" }, { chat_messages_id: sentMsg, msg_status: deleteMsgStatus }, callback),
+      (res, callback) => {
+        if (receivedMsg.length > 0) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_DELETE" }, { chat_messages_id: receivedMsg, msg_status: 2 }, callback)
+        } else {
+          callback(null, res)
+        }
+      }
     ],
       (err, response) => {
         // err if validation fail
