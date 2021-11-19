@@ -14,7 +14,8 @@ let connection = mysql.createPool({
   connectionLimit: 500,
   supportBigNumbers: true,
   multipleStatements: true,
-  timezone: 'utc'
+  timezone: 'utc',
+  charset: 'utf8mb4_unicode_ci'
 });
 
 /**
