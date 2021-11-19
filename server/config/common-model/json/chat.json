@@ -163,29 +163,7 @@
       "SQL": "INSERT INTO chat_message (chat_id, msg, attachment_url, attachment_type, sender_id, msg_status) VALUES (?, ?, ?, ?, ?, ?)",
       "RESULT": "SINGLE"
     },
-    "CHAT_UPDATE_LAST_MSG": {
-      "PARAMS": [
-        {
-          "TYPE": "string",
-          "KEY": "msg_type"
-        },
-        {
-          "TYPE": "string",
-          "KEY": "msg"
-        },
-        {
-          "TYPE": "number",
-          "KEY": "sender_id"
-        },
-        {
-          "TYPE": "number",
-          "KEY": "chat_id"
-        }
-      ],
-      "SQL": "update chat set msg_type= ?, msg_text=?, sender_id=?, last_msg_at=now() where id = ?",
-      "RESULT": "SINGLE"
-    },
-    "CHAT_MESSAGE_GET": {
+    "msg_GET": {
       "PARAMS": [
         {
           "TYPE": "number",
@@ -210,7 +188,7 @@
       ],
       "SQL": "select * from chat_message where chat_id = ? and (delete_status = 0 OR (delete_status = 1 AND sender_id != ?) OR (delete_status = 2 AND sender_id = ?)) order by id desc LIMIT ? OFFSET ?"
     },
-    "CHAT_MESSAGE_COUNT_GET": {
+    "msg_COUNT_GET": {
       "PARAMS": [
         {
           "TYPE": "number",
@@ -228,7 +206,7 @@
       "SQL": "select count(*) as count from chat_message where chat_id = ? and (delete_status = 0 OR (delete_status = 1 AND sender_id != ?) OR (delete_status = 2 AND sender_id = ?))",
       "RESULT": "SINGLE"
     },
-    "CHAT_MESSAGE_DELETE": {
+    "msg_DELETE": {
       "PARAMS": [
         {
           "TYPE": "number",
@@ -241,8 +219,12 @@
       ],
       "SQL": "update chat_message set delete_status = ?, modified_at = now()  where id in (?)"
     },
-    "CHAT_LIST_SEARCH": {
+    "CHAT_LIST_MESSAGE_SEARCH": {
       "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
         {
           "TYPE": "number",
           "KEY": "user_id"
@@ -250,6 +232,23 @@
         {
           "TYPE": "string",
           "KEY": "search_key"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "SELECT chat.*, cm.* from chat INNER JOIN chat_message cm on cm.chat_id = chat.id AND (cm.delete_status = 0 OR cm.delete_status !=3) AND ((cm.sender_id = ? and cm.delete_status != 1) OR (cm.sender_id != ? AND cm.delete_status != 2)) WHERE cm.msg LIKE ? AND (chat.user_id = ? OR chat.friend_id = ?) GROUP BY chat.id ORDER BY cm.created_at desc;"
+    },
+    "CHAT_LIST_CONTACT_SEARCH": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
         },
         {
           "TYPE": "string",
@@ -268,7 +267,25 @@
           "KEY": "user_id"
         }
       ],
-      "SQL": "SELECT chat.* from chat INNER JOIN fos_user ON (fos_user.id = chat.user_id OR fos_user.id = chat.friend_id) AND fos_user.id != ? WHERE (chat.msg_text LIKE ? OR fos_user.first_name LIKE ? OR fos_user.last_name LIKE ?) AND (chat.user_id = ? OR chat.friend_id = ?);"
+      "SQL": "SELECT chat.*, fu.first_name, fu.last_name, fu.username, fu.cover_image, fu.profile_url, fu.id as master_user_friend_id from chat INNER JOIN fos_user fu ON (fu.id = chat.user_id OR fu.id = chat.friend_id) AND fu.id != ? WHERE (fu.first_name LIKE ? OR fu.last_name LIKE ?) AND (chat.user_id = ? OR chat.friend_id = ?) ORDER BY chat.created_at desc;"
+    },
+    "CHAT_LAST_MSG_GET": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "SELECT * from chat_message where chat_id = ? AND (delete_status = 0 OR delete_status !=3) AND ((sender_id = ? and delete_status != 1) OR (sender_id != ? AND delete_status != 2)) order by id desc limit 1",
+      "RESULT": "SINGLE"
     }
   }
 }

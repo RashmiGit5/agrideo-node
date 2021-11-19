@@ -170,6 +170,26 @@ const chatPaggingListGet = (req, res) => {
             callback(null, response)
           }
         )
+      },
+      (response, callback) => {
+        let chatListData = response.chat || [], count = 0, modifiedChatData = []
+        async.whilst(
+          () => { return count < chatListData.length },
+          (call) => {
+            commonModel({ module_name: "CHAT", method_name: "CHAT_LAST_MSG_GET" }, { chat_id: chatListData[count].id, user_id: data.user_id }, (err, res) => {
+              if (!err) {
+                chatListData[count].message = res
+                modifiedChatData.push(chatListData[count])
+              }
+              count++
+              call(err, res)
+            })
+          },
+          () => {
+            response.chat = modifiedChatData
+            callback(null, response)
+          }
+        )
       }
     ],
       (err, response) => {
@@ -188,17 +208,17 @@ const chatPaggingListGet = (req, res) => {
 
 /**
  * @type function
- * @description Chat list search
+ * @description Chat message list search
  * @param (object) req : Request information from route()
  * @param (object) res : Response the result(filename)
  * @return (undefined)
  */
-const chatListSearch = (req, res) => {
+const chatListSearchMessage = (req, res) => {
   try {
     let data = _.assign(req.body, req.query, req.params, req.jwt);
     data.search_key = `%${data.search_key}%`
     async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_LIST_SEARCH" }, data, callback),
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_LIST_MESSAGE_SEARCH" }, data, callback),
       (response, callback) => {
         let chatListData = response || [], count = 0, modifiedChatData = []
         async.whilst(
@@ -208,6 +228,53 @@ const chatListSearch = (req, res) => {
             commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { user_chat_id }, (err, res) => {
               if (!err) {
                 chatListData[count].user = res
+                modifiedChatData.push(chatListData[count])
+              }
+              count++
+              call(err, res)
+            })
+          },
+          () => {
+            callback(null, modifiedChatData)
+          }
+        )
+      }
+    ],
+      (err, response) => {
+        // err if validation fail
+        if (err) {
+          httpResponse.sendFailer(res, err.code, err);
+          return;
+        } else {
+          httpResponse.sendSuccess(res, response);
+        }
+      });
+  } catch (err) {
+    httpResponse.sendFailer(res, 500);
+  }
+}
+
+/**
+ * @type function
+ * @description Chat contact list search
+ * @param (object) req : Request information from route()
+ * @param (object) res : Response the result(filename)
+ * @return (undefined)
+ */
+const chatListSearchContact = (req, res) => {
+  try {
+    let data = _.assign(req.body, req.query, req.params, req.jwt);
+    data.search_key = `%${data.search_key}%`
+    async.waterfall([
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_LIST_CONTACT_SEARCH" }, data, callback),
+      (response, callback) => {
+        let chatListData = response || [], count = 0, modifiedChatData = []
+        async.whilst(
+          () => { return count < chatListData.length },
+          (call) => {
+            commonModel({ module_name: "CHAT", method_name: "CHAT_LAST_MSG_GET" }, { chat_id: chatListData[count].id, user_id: data.user_id }, (err, res) => {
+              if (!err) {
+                chatListData[count].message = res
                 modifiedChatData.push(chatListData[count])
               }
               count++
@@ -250,7 +317,6 @@ const chatSendMsg = (req, res) => {
     data.msg_type = !!data.attachment_url ? GENERAL.CHAT_MESSAGE_TYPE.ATTACHMENT : GENERAL.CHAT_MESSAGE_TYPE.TEXT
     async.series([
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, callback),
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_UPDATE_LAST_MSG" }, data, callback),
     ],
       (err, response) => {
         // err if validation fail
@@ -353,4 +419,7 @@ const chatMessageDelete = (req, res) => {
   }
 }
 
-export { chatCreate, chatDetail, chatUserDetail, chatPaggingListGet, chatListSearch, chatSendMsg, chatMessageGet, chatMessageDelete };
+export {
+  chatCreate, chatDetail, chatUserDetail, chatPaggingListGet, chatListSearchMessage, chatSendMsg, chatMessageGet,
+  chatMessageDelete, chatListSearchContact
+};
