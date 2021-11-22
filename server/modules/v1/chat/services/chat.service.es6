@@ -317,6 +317,7 @@ const chatSendMsg = (req, res) => {
     data.msg_type = !!data.attachment_url ? GENERAL.CHAT_MESSAGE_TYPE.ATTACHMENT : GENERAL.CHAT_MESSAGE_TYPE.TEXT
     async.series([
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, callback),
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_UPDATE_LAST_MESSAGE" }, data, callback),
     ],
       (err, response) => {
         // err if validation fail

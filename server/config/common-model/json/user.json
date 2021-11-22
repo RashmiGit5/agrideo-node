@@ -55,6 +55,23 @@
         }
       ],
       "SQL": "update chat set blocked_uid = ? where id = ?"
+    },
+    "USER_AUTO_COMPLETE": {
+      "PARAMS": [
+        {
+          "TYPE": "string",
+          "KEY": "search_key"
+        },
+        {
+          "TYPE": "string",
+          "KEY": "search_key"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "select fos_user.* from contacts inner join fos_user on fos_user.id = contacts.friend_id where ((SELECT CONCAT(fos_user.first_name, fos_user.last_name)) like ? OR fos_user.username like ?)AND user_id = ?"
     }
   }
 }

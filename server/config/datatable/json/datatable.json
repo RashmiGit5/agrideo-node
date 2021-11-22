@@ -8,6 +8,7 @@
     ]
   },
   "CHAT_DATATABLE_CONSTANTS": {
+    "SORT_FIELD": "last_msg_at",
     "SORT_VALUE": "desc",
     "PAGE_SIZE": 10,
     "COLUMNS": [

@@ -109,7 +109,7 @@
           "KEY": "page_offset"
         }
       ],
-      "SQL": "select * from chat where user_id = ? OR friend_id = ? #filters# ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
+      "SQL": "select * from chat where user_id = ? OR friend_id = ? ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
     },
     "CHAT_PAGGING_COUNT_GET": {
       "PARAMS": [
@@ -120,17 +120,9 @@
         {
           "TYPE": "number",
           "KEY": "user_id"
-        },
-        {
-          "TYPE": "number",
-          "KEY": "page_size"
-        },
-        {
-          "TYPE": "number",
-          "KEY": "page_offset"
         }
       ],
-      "SQL": "select count(*) as count from chat where user_id = ? OR friend_id = ? LIMIT ? OFFSET ?",
+      "SQL": "select count(*) as count from chat where user_id = ? OR friend_id = ?",
       "RESULT": "SINGLE"
     },
     "CHAT_SEND_MESSAGE": {
@@ -163,7 +155,16 @@
       "SQL": "INSERT INTO chat_message (chat_id, msg, attachment_url, attachment_type, sender_id, msg_status) VALUES (?, ?, ?, ?, ?, ?)",
       "RESULT": "SINGLE"
     },
-    "msg_GET": {
+    "CHAT_UPDATE_LAST_MESSAGE": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        }
+      ],
+      "SQL": "update chat set last_msg_at = now() where id = ?"
+    },
+    "CHAT_MESSAGE_GET": {
       "PARAMS": [
         {
           "TYPE": "number",
@@ -188,7 +189,7 @@
       ],
       "SQL": "select * from chat_message where chat_id = ? and (delete_status = 0 OR (delete_status = 1 AND sender_id != ?) OR (delete_status = 2 AND sender_id = ?)) order by id desc LIMIT ? OFFSET ?"
     },
-    "msg_COUNT_GET": {
+    "CHAT_MESSAGE_COUNT_GET": {
       "PARAMS": [
         {
           "TYPE": "number",
