@@ -5,6 +5,7 @@ import { commonModel } from '../../common/models/common.model';
 import { getDataTableSetting, } from '../../../../helpers/common-functions';
 import { DATATABLE } from '../../../../config/datatable';
 import { GENERAL } from '../../../../config/general';
+import { socketDeleteMsg } from '../socket/chat.socket';
 
 /**
  * @type function
@@ -314,7 +315,6 @@ const chatSendMsg = (req, res) => {
     if (!data.msg_status) {
       data.msg_status = 1
     }
-    data.msg_type = !!data.attachment_url ? GENERAL.CHAT_MESSAGE_TYPE.ATTACHMENT : GENERAL.CHAT_MESSAGE_TYPE.TEXT
     async.series([
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, callback),
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_UPDATE_LAST_MESSAGE" }, data, callback),
@@ -413,6 +413,10 @@ const chatMessageDelete = (req, res) => {
           return;
         } else {
           httpResponse.sendSuccess(res);
+          if (data.deleted_for_everyone) {
+            var io = req.app.get('socketio');
+            socketDeleteMsg(io, data)
+          }
         }
       });
   } catch (err) {

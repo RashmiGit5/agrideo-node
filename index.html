@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hello world</title>
+</head>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io();
+
+    socket.emit('join', 7)
+    socket.emit('join_chat', 4)
+
+    socket.on('on_new_message', function (data) {
+        console.log("on_new_message -------> " + JSON.stringify(data));
+    });
+
+    socket.on('on_delete_message', function (data) {
+        console.log("on_delete_message -------> " + JSON.stringify(data));
+    });
+
+    socket.on('on_user_status_update', function (data) {
+        console.log("on_user_status_update -------> " + JSON.stringify(data));
+    });
+
+    socket.on('on_chat_user_block', function (data) {
+        console.log("on_chat_user_block -------> " + JSON.stringify(data));
+    });
+
+    var onPressBtn = () => {
+        socket.emit('send_message', {
+            "chat_id": 4,
+            "sender_id": 7,
+            "msg": "This message from 7",
+            "attachment_url": "",
+            "attachment_type": "",
+        });
+    }
+
+</script>
+
+<body>
+    <button onclick="onPressBtn()" type="button">Press Me!</button>
+</body>
+
+</html>
