@@ -16,6 +16,8 @@
     ]
   },
   "CHAT_MESSAGE_DATATABLE_CONSTANTS": {
-    "PAGE_SIZE": 10
+    "PAGE_SIZE": 10,
+    "SORT_FIELD": "id",
+    "SORT_VALUE": "desc"
   }
 }

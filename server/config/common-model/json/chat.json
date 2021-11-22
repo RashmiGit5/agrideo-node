@@ -179,6 +179,14 @@
           "KEY": "user_id"
         },
         {
+          "TYPE": "sort",
+          "KEY": "sort_by"
+        },
+        {
+          "TYPE": "sort",
+          "KEY": "sort_order"
+        },
+        {
           "TYPE": "number",
           "KEY": "page_size"
         },
@@ -187,7 +195,7 @@
           "KEY": "page_offset"
         }
       ],
-      "SQL": "select * from chat_message where chat_id = ? and (delete_status = 0 OR (delete_status = 1 AND sender_id != ?) OR (delete_status = 2 AND sender_id = ?)) order by id desc LIMIT ? OFFSET ?"
+      "SQL": "select * from chat_message where chat_id = ? and (delete_status = 0 OR (delete_status = 1 AND sender_id != ?) OR (delete_status = 2 AND sender_id = ?)) ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
     },
     "CHAT_MESSAGE_COUNT_GET": {
       "PARAMS": [
