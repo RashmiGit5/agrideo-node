@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `chat` (
   `user_id` int(11) NOT NULL,
   `friend_id` int(11) NOT NULL,
   `blocked_uid` int(11) DEFAULT NULL,
+  `last_msg_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
