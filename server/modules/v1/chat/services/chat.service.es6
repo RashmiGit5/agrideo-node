@@ -59,6 +59,20 @@ const chatCreate = (req, res) => {
         }
       },
       (res, callback) => {
+        if (!isChatExist) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_STATUS_CREATE" }, { chat_id: res.insertId || res.id, user_id: data.user_id }, (err, response) => callback(null, res))
+        } else {
+          callback(null, res)
+        }
+      },
+      (res, callback) => {
+        if (!isChatExist) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_STATUS_CREATE" }, { chat_id: res.insertId || res.id, user_id: data.friend_id }, (err, response) => callback(null, res))
+        } else {
+          callback(null, res)
+        }
+      },
+      (res, callback) => {
         commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, { chat_id: res.insertId || res.id }, callback)
       },
       (res, callback) => {
@@ -319,8 +333,11 @@ const chatSendMsg = (io, data) => {
     async.waterfall([
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, data, callback),
       (res, callback) => {
-        data.msg_status = !!res.blocked_uid ? 4 : 1
-        commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, (err, resp) => callback(err, { chatDetail: res, messageDetail: resp }))
+        commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_DETAIL" }, { ...data, user_id: data.sender_id }, (err, resp) => callback(err, { chatDetail: { ...res, chatStatus: resp } }))
+      },
+      (res, callback) => {
+        data.msg_status = !!res.chatDetail.chatStatus.is_blocked ? 4 : 1
+        commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp }))
       },
       (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MSG_FROM_ID" }, { id: res.messageDetail.insertId }, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp })),
       (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_UPDATE_LAST_MESSAGE" }, data, (err, resp) => callback(err, res)),
@@ -450,16 +467,16 @@ const messageReceiveStstusUpdate = (io, data) => {
 
 /**
  * @type function
- * @description Chat message status update
+ * @description Chat Mark As Read Unread
  * @param (object) req : Request information from route()
  * @param (object) res : Response the result(filename)
  * @return (undefined)
  */
-const chatMessageStatusUpdate = (req, res) => {
+const chatMarkAsReadUnread = (req, res) => {
   try {
     let data = _.assign(req.body, req.query, req.params, req.jwt);
     async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_STATUS_UPDATE" }, { message_ids: data.messages_id, msg_status: data.is_read ? 3 : 2 }, callback),
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MARK_AS_READ_UNREAD" }, { ...data, status: data.mark_as_read ? 0 : 1 }, callback)
     ],
       (err, response) => {
         // err if validation fail
@@ -468,7 +485,6 @@ const chatMessageStatusUpdate = (req, res) => {
           return;
         } else {
           httpResponse.sendSuccess(res);
-          socketMessageStatusUpdate(req.app.get('socketio'), { message_id: data.messages_id, msg_status: data.is_read ? 3 : 2 })
         }
       });
   } catch (err) {
@@ -478,5 +494,5 @@ const chatMessageStatusUpdate = (req, res) => {
 
 export {
   chatCreate, chatDetail, chatUserDetail, chatPaggingListGet, chatListSearchMessage, chatSendMsg, chatMessageGet,
-  chatMessageDelete, chatListSearchContact, messageReceiveStstusUpdate, chatMessageStatusUpdate
+  chatMessageDelete, chatListSearchContact, messageReceiveStstusUpdate, chatMarkAsReadUnread
 };

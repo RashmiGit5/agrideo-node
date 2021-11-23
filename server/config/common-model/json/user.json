@@ -47,6 +47,10 @@
       "PARAMS": [
         {
           "TYPE": "number",
+          "KEY": "status"
+        },
+        {
+          "TYPE": "number",
           "KEY": "friend_id"
         },
         {
@@ -54,7 +58,7 @@
           "KEY": "chat_id"
         }
       ],
-      "SQL": "update chat set blocked_uid = ? where id = ?"
+      "SQL": "update chat_status set is_blocked = ? where user_id = ? and chat_id = ?"
     },
     "USER_AUTO_COMPLETE": {
       "PARAMS": [

@@ -14,11 +14,11 @@ import { GENERAL } from '../../../../config/general';
  */
 const socketNewMsg = (io, data) => {
   try {
-    if (data.chatDetail.user_id !== data.chatDetail.blocked_uid) {
+    if (data.chatDetail.user_id === data.messageDetail.sender_id || !data.chatDetail.chatStatus.is_blocked) {
       io.sockets.in(`${data.chatDetail.user_id}`).emit("on_new_message", data.messageDetail)
     }
 
-    if (data.chatDetail.friend_id !== data.chatDetail.blocked_uid) {
+    if (data.chatDetail.friend_id === data.messageDetail.sender_id || !data.chatDetail.chatStatus.is_blocked) {
       io.sockets.in(`${data.chatDetail.friend_id}`).emit("on_new_message", data.messageDetail)
     }
   } catch (err) {

@@ -47,12 +47,7 @@ const userBlockUnblock = (req, res) => {
     let data = _.assign(req.body, req.query, req.params, req.jwt);
     async.waterfall([
       (callback) => commonModel({ module_name: "USER", method_name: "USER_CHECK_IN_CHAT" }, data, callback),
-      (res, callback) => {
-        if (!data.is_block) {
-          data.friend_id = null
-        }
-        commonModel({ module_name: "USER", method_name: "USER_BLOCK_UNBLOCK" }, data, callback)
-      },
+      (res, callback) => commonModel({ module_name: "USER", method_name: "USER_BLOCK_UNBLOCK" }, { ...data, status: data.is_block ? 1 : null }, callback),
     ],
       (err, response) => {
         // err if validation fail

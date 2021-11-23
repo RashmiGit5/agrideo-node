@@ -333,6 +333,50 @@
         }
       ],
       "SQL": "update chat_message set msg_status = ?, modified_at = now() where id in (?)"
+    },
+    "CHAT_MARK_AS_READ_UNREAD": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "status"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "update chat_status set  where id = ?"
+    },
+    "CHAT_STATUS_CREATE": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "insert into chat_status (chat_id, user_id) values (?, ?)"
+    },
+    "CHAT_USER_STATUS_DETAIL": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "select * from chat_status where chat_id = ? and user_id != ?",
+      "RESULT": "SINGLE"
     }
   }
 }

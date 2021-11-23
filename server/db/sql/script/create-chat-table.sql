@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS `chat` (
   `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `user_id` int(11) NOT NULL,
   `friend_id` int(11) NOT NULL,
-  `blocked_uid` int(11) DEFAULT NULL,
   `last_msg_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -32,4 +31,14 @@ CREATE TABLE IF NOT EXISTS `chat_user_status` (
   `user_id` int(11) NOT NULL PRIMARY KEY,
   `user_status` tinyint(2) NOT NULL DEFAULT 1 COMMENT '0:offline, 1:available, 2:busy, 3:away',
   `modified_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+CREATE TABLE IF NOT EXISTS `chat_status` (
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `chat_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `is_blocked` tinyint(2) DEFAULT NULL,
+  `is_unread` tinyint(2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
