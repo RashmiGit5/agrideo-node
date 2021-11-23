@@ -23,9 +23,10 @@ const socketNewMsg = (io, data) => {
     ], (err, response) => {
       if (err) {
       } else {
+        response.messageDetail.temp_id = data.temp_id
         io.sockets.in(`${response.chatDetail.user_id}`).emit("on_new_message", response.messageDetail)
         io.sockets.in(`${response.chatDetail.friend_id}`).emit("on_new_message", response.messageDetail)
-        io.sockets.in(`chat_${response.chatDetail.id}`).emit("on_new_message", response.messageDetail)
+        io.sockets.in(`chat_${response.chatDetail.id}`).emit("on_new_message_chat", response.messageDetail)
       }
     });
   } catch (err) {

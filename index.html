@@ -15,6 +15,10 @@
         console.log("on_new_message -------> " + JSON.stringify(data));
     });
 
+    socket.on('on_new_message_chat', function (data) {
+        console.log("on_new_message_chat -------> " + JSON.stringify(data));
+    });
+
     socket.on('on_delete_message', function (data) {
         console.log("on_delete_message -------> " + JSON.stringify(data));
     });
@@ -29,6 +33,7 @@
 
     var onPressBtn = () => {
         socket.emit('send_message', {
+            "temp_id": 351635,
             "chat_id": 4,
             "sender_id": 7,
             "msg": "This message from 7",
