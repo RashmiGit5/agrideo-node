@@ -315,12 +315,15 @@ const chatListSearchContact = (req, res) => {
  */
 const chatSendMsg = (io, data) => {
   try {
-    data.msg_status = 1
+
     async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, callback),
-      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MSG_FROM_ID" }, { id: res.insertId }, callback),
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, data, callback),
+      (res, callback) => {
+        data.msg_status = !!res.blocked_uid ? 4 : 1
+        commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, (err, resp) => callback(err, { chatDetail: res, messageDetail: resp }))
+      },
+      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MSG_FROM_ID" }, { id: res.messageDetail.insertId }, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp })),
       (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_UPDATE_LAST_MESSAGE" }, data, (err, resp) => callback(err, res)),
-      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, data, (err, resp) => callback(err, { chatDetail: resp, messageDetail: res })),
     ], (err, response) => {
       if (err) {
       } else {

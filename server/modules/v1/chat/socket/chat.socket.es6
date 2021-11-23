@@ -14,8 +14,13 @@ import { GENERAL } from '../../../../config/general';
  */
 const socketNewMsg = (io, data) => {
   try {
-    io.sockets.in(`${data.chatDetail.user_id}`).emit("on_new_message", data.messageDetail)
-    io.sockets.in(`${data.chatDetail.friend_id}`).emit("on_new_message", data.messageDetail)
+    if (data.chatDetail.user_id !== data.chatDetail.blocked_uid) {
+      io.sockets.in(`${data.chatDetail.user_id}`).emit("on_new_message", data.messageDetail)
+    }
+
+    if (data.chatDetail.friend_id !== data.chatDetail.blocked_uid) {
+      io.sockets.in(`${data.chatDetail.friend_id}`).emit("on_new_message", data.messageDetail)
+    }
   } catch (err) {
 
   }
