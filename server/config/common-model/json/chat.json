@@ -233,7 +233,7 @@
           "KEY": "chat_messages_id"
         }
       ],
-      "SQL": "update chat_message set delete_status = ?, modified_at = now()  where id in (?)"
+      "SQL": "update chat_message set delete_status = ?, modified_at = now() where id in (?)"
     },
     "CHAT_LIST_MESSAGE_SEARCH": {
       "PARAMS": [
@@ -320,6 +320,19 @@
       ],
       "SQL": "SELECT * from chat_message where id = ?",
       "RESULT": "SINGLE"
+    },
+    "CHAT_MESSAGE_STATUS_UPDATE": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "msg_status"
+        },
+        {
+          "TYPE": "numberarray",
+          "KEY": "message_ids"
+        }
+      ],
+      "SQL": "update chat_message set msg_status = ?, modified_at = now() where id in (?)"
     }
   }
 }

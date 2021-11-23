@@ -30,6 +30,10 @@
         console.log("on_new_chat_create -------> " + JSON.stringify(data));
     });
 
+    socket.on('on_message_status_update', function (data) {
+        console.log("on_message_status_update -------> " + JSON.stringify(data));
+    });
+
     var onPressBtn = () => {
         socket.emit('send_message', {
             "temp_id": 351635,
@@ -41,10 +45,15 @@
         });
     }
 
+    var onPressReceive = () => {
+        socket.emit('message_received', { "message_id": [113, 114, 115], "is_read": false });
+    }
+
 </script>
 
 <body>
     <button onclick="onPressBtn()" type="button">Send Message</button>
+    <button onclick="onPressReceive()" type="button">Message Received</button>
 </body>
 
 </html>

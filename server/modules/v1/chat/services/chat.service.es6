@@ -5,7 +5,7 @@ import { commonModel } from '../../common/models/common.model';
 import { getDataTableSetting, } from '../../../../helpers/common-functions';
 import { DATATABLE } from '../../../../config/datatable';
 import { GENERAL } from '../../../../config/general';
-import { socketDeleteMsg, socketNewChatCreate } from '../socket/chat.socket';
+import { socketDeleteMsg, socketNewChatCreate, socketNewMsg, socketMessageStatusUpdate } from '../socket/chat.socket';
 
 /**
  * @type function
@@ -310,31 +310,25 @@ const chatListSearchContact = (req, res) => {
 /**
  * @type function
  * @description send chat message
- * @param (object) req : Request information from route()
- * @param (object) res : Response the result(filename)
- * @return (undefined)
+ * @param (object) io : socket io ref
+ * @param (object) res : socket event data
  */
-const chatSendMsg = (req, res) => {
+const chatSendMsg = (io, data) => {
   try {
-    let data = _.assign(req.body, req.query, req.params, req.jwt);
-    if (!data.msg_status) {
-      data.msg_status = 1
-    }
-    async.series([
+    data.msg_status = 1
+    async.waterfall([
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, callback),
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_UPDATE_LAST_MESSAGE" }, data, callback),
-    ],
-      (err, response) => {
-        // err if validation fail
-        if (err) {
-          httpResponse.sendFailer(res, err.code, err);
-          return;
-        } else {
-          httpResponse.sendSuccess(res);
-        }
-      });
+      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MSG_FROM_ID" }, { id: res.insertId }, callback),
+      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_UPDATE_LAST_MESSAGE" }, data, (err, resp) => callback(err, res)),
+      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, data, (err, resp) => callback(err, { chatDetail: resp, messageDetail: res })),
+    ], (err, response) => {
+      if (err) {
+      } else {
+        response.messageDetail.temp_id = data.temp_id
+        socketNewMsg(io, response)
+      }
+    });
   } catch (err) {
-    httpResponse.sendFailer(res, 500);
   }
 }
 
@@ -409,7 +403,8 @@ const chatMessageDelete = (req, res) => {
         } else {
           callback(null, res)
         }
-      }
+      },
+      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, data, callback),
     ],
       (err, response) => {
         // err if validation fail
@@ -419,8 +414,58 @@ const chatMessageDelete = (req, res) => {
         } else {
           httpResponse.sendSuccess(res);
           if (data.deleted_for_everyone) {
-            socketDeleteMsg(req.app.get('socketio'), data)
+            socketDeleteMsg(req.app.get('socketio'), response, data)
           }
+        }
+      });
+  } catch (err) {
+    httpResponse.sendFailer(res, 500);
+  }
+}
+
+/**
+ * @type function
+ * @description Chat message update message status
+ * @param (object) io : socket io ref
+ * @param (object) res : socket event data
+ */
+const messageReceiveStstusUpdate = (io, data) => {
+  try {
+    async.waterfall([
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_STATUS_UPDATE" }, { message_ids: data.message_id, msg_status: data.is_read ? 3 : 2 }, callback),
+    ],
+      (err, response) => {
+        if (err) {
+        } else {
+          socketMessageStatusUpdate(io, { message_id: data.message_id, msg_status: data.is_read ? 3 : 2 })
+        }
+      });
+  } catch (err) {
+  }
+}
+
+
+/**
+ * @type function
+ * @description Chat message status update
+ * @param (object) req : Request information from route()
+ * @param (object) res : Response the result(filename)
+ * @return (undefined)
+ */
+const chatMessageStatusUpdate = (req, res) => {
+  try {
+    let data = _.assign(req.body, req.query, req.params, req.jwt);
+    async.waterfall([
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_STATUS_UPDATE" }, { message_ids: data.messages_id, msg_status: data.is_read ? 3 : 2 }, callback),
+    ],
+      (err, response) => {
+        // err if validation fail
+        if (err) {
+          httpResponse.sendFailer(res, err.code, err);
+          return;
+        } else {
+          httpResponse.sendSuccess(res);
+          socketMessageStatusUpdate(req.app.get('socketio'), { message_id: data.messages_id, msg_status: data.is_read ? 3 : 2 })
         }
       });
   } catch (err) {
@@ -430,5 +475,5 @@ const chatMessageDelete = (req, res) => {
 
 export {
   chatCreate, chatDetail, chatUserDetail, chatPaggingListGet, chatListSearchMessage, chatSendMsg, chatMessageGet,
-  chatMessageDelete, chatListSearchContact
+  chatMessageDelete, chatListSearchContact, messageReceiveStstusUpdate, chatMessageStatusUpdate
 };

@@ -7,7 +7,7 @@ import apiV1 from "./apis/v1";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
-import { socketNewMsg } from "./modules/v1/chat/socket/chat.socket"
+import { chatSendMsg, messageReceiveStstusUpdate } from "./modules/v1/chat/services/chat.service"
 
 const port = 5001;
 
@@ -19,7 +19,11 @@ io.on("connection", (socket) => {
   console.log('A user connected');
 
   socket.on('send_message', (data) => {
-    socketNewMsg(io, data)
+    chatSendMsg(io, data)
+  });
+
+  socket.on('message_received', (data) => {
+    messageReceiveStstusUpdate(io, data)
   });
 
   socket.on('join', function (data) {

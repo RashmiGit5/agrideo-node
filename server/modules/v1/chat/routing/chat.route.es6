@@ -1,6 +1,6 @@
 import {
   chatCreate, chatDetail, chatUserDetail, chatSendMsg, chatMessageGet, chatPaggingListGet, chatMessageDelete,
-  chatListSearchMessage, chatListSearchContact
+  chatListSearchMessage, chatListSearchContact, chatMessageStatusUpdate
 } from "../services/chat.service";
 import { commonValidator } from '../../common/validators/common.validator';
 
@@ -24,6 +24,8 @@ const chatroute = app => {
   app.post("/chat/get-message", commonValidator('v1/schema/chat/chat-get-message'), chatMessageGet);
 
   app.post("/chat/message/delete", commonValidator('v1/schema/chat/chat-message-delete'), chatMessageDelete);
+
+  app.post("/chat/message/status-update", commonValidator('v1/schema/chat/chat-message-status-update'), chatMessageStatusUpdate);
 
   app.get("/chat/user/:user_id", commonValidator('v1/schema/chat/chat-user-detail'), chatUserDetail);
 

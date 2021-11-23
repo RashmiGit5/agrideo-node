@@ -1,8 +1,11 @@
 
 const schema = {
   type: "object",
-  required: ["messages_id", "deleted_for_everyone"],
+  required: ["messages_id", "chat_id", "deleted_for_everyone"],
   properties: {
+    chat_id: {
+      format: "numberOnly"
+    },
     messages_id: {
       format: "array"
     },

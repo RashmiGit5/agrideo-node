@@ -14,20 +14,8 @@ import { GENERAL } from '../../../../config/general';
  */
 const socketNewMsg = (io, data) => {
   try {
-    data.msg_status = 1
-    async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, callback),
-      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MSG_FROM_ID" }, { id: res.insertId }, callback),
-      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_UPDATE_LAST_MESSAGE" }, data, (err, resp) => callback(err, res)),
-      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, data, (err, resp) => callback(err, { chatDetail: resp, messageDetail: res })),
-    ], (err, response) => {
-      if (err) {
-      } else {
-        response.messageDetail.temp_id = data.temp_id
-        io.sockets.in(`${response.chatDetail.user_id}`).emit("on_new_message", response.messageDetail)
-        io.sockets.in(`${response.chatDetail.friend_id}`).emit("on_new_message", response.messageDetail)
-      }
-    });
+    io.sockets.in(`${data.chatDetail.user_id}`).emit("on_new_message", data.messageDetail)
+    io.sockets.in(`${data.chatDetail.friend_id}`).emit("on_new_message", data.messageDetail)
   } catch (err) {
 
   }
@@ -39,17 +27,10 @@ const socketNewMsg = (io, data) => {
  * @param (object) io : socket io ref
  * @param (object) res : socket event data
  */
-const socketDeleteMsg = (io, data) => {
+const socketDeleteMsg = (io, response, data) => {
   try {
-    async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, data, callback),
-    ], (err, response) => {
-      if (err) {
-      } else {
-        io.sockets.in(`${response.user_id}`).emit("on_delete_message", data)
-        io.sockets.in(`${response.friend_id}`).emit("on_delete_message", data)
-      }
-    });
+    io.sockets.in(`${response.user_id}`).emit("on_delete_message", data)
+    io.sockets.in(`${response.friend_id}`).emit("on_delete_message", data)
   } catch (err) {
 
   }
@@ -70,4 +51,18 @@ const socketNewChatCreate = (io, data) => {
   }
 }
 
-export { socketNewMsg, socketDeleteMsg, socketNewChatCreate };
+/**
+ * @type function
+ * @description socekt on message status update
+ * @param (object) io : socket io ref
+ * @param (object) res : socket event data
+ */
+const socketMessageStatusUpdate = (io, data) => {
+  try {
+    io.sockets.emit("on_message_status_update", data)
+  } catch (err) {
+
+  }
+}
+
+export { socketNewMsg, socketDeleteMsg, socketNewChatCreate, socketMessageStatusUpdate };
