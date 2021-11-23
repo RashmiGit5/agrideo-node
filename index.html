@@ -9,14 +9,9 @@
     var socket = io();
 
     socket.emit('join', 7)
-    socket.emit('join_chat', 4)
 
     socket.on('on_new_message', function (data) {
         console.log("on_new_message -------> " + JSON.stringify(data));
-    });
-
-    socket.on('on_new_message_chat', function (data) {
-        console.log("on_new_message_chat -------> " + JSON.stringify(data));
     });
 
     socket.on('on_delete_message', function (data) {
@@ -29,6 +24,10 @@
 
     socket.on('on_chat_user_block', function (data) {
         console.log("on_chat_user_block -------> " + JSON.stringify(data));
+    });
+
+    socket.on('on_new_chat_create', function (data) {
+        console.log("on_new_chat_create -------> " + JSON.stringify(data));
     });
 
     var onPressBtn = () => {
@@ -45,7 +44,7 @@
 </script>
 
 <body>
-    <button onclick="onPressBtn()" type="button">Press Me!</button>
+    <button onclick="onPressBtn()" type="button">Send Message</button>
 </body>
 
 </html>

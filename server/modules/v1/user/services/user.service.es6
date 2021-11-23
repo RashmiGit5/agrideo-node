@@ -27,8 +27,7 @@ const userStatusUpdate = (req, res) => {
           return;
         } else {
           httpResponse.sendSuccess(res);
-          var io = req.app.get('socketio');
-          socketUserStatusUpdate(io, { user_id: data.user_id, status: data.status })
+          socketUserStatusUpdate(req.app.get('socketio'), { user_id: data.user_id, status: data.status })
         }
       });
   } catch (err) {
@@ -62,8 +61,7 @@ const userBlockUnblock = (req, res) => {
           return;
         } else {
           httpResponse.sendSuccess(res);
-          var io = req.app.get('socketio');
-          socketBlockChatUser(io, { chat_id: data.chat_id, block_uid: data.friend_id, is_block: data.is_block })
+          socketBlockChatUser(req.app.get('socketio'), { chat_id: data.chat_id, block_uid: data.friend_id, is_block: data.is_block })
         }
       });
   } catch (err) {

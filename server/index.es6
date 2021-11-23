@@ -26,10 +26,6 @@ io.on("connection", (socket) => {
     socket.join(`${data}`)
   });
 
-  socket.on('join_chat', function (data) {
-    socket.join(`chat_${data}`)
-  });
-
   socket.on('disconnect', function () {
     console.log('A user disconnected');
   });

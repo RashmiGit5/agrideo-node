@@ -29,7 +29,6 @@ const socketUserStatusUpdate = (io, data) => {
 const socketBlockChatUser = (io, data) => {
   try {
     io.sockets.emit("on_chat_user_block", data)
-    io.sockets.in(`chat_${data.chat_id}`).emit("on_chat_user_block", data)
   } catch (err) {
 
   }

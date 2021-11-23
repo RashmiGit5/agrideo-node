@@ -26,7 +26,6 @@ const socketNewMsg = (io, data) => {
         response.messageDetail.temp_id = data.temp_id
         io.sockets.in(`${response.chatDetail.user_id}`).emit("on_new_message", response.messageDetail)
         io.sockets.in(`${response.chatDetail.friend_id}`).emit("on_new_message", response.messageDetail)
-        io.sockets.in(`chat_${response.chatDetail.id}`).emit("on_new_message_chat", response.messageDetail)
       }
     });
   } catch (err) {
@@ -49,7 +48,6 @@ const socketDeleteMsg = (io, data) => {
       } else {
         io.sockets.in(`${response.user_id}`).emit("on_delete_message", data)
         io.sockets.in(`${response.friend_id}`).emit("on_delete_message", data)
-        io.sockets.in(`chat_${response.id}`).emit("on_delete_message", data)
       }
     });
   } catch (err) {
@@ -57,4 +55,19 @@ const socketDeleteMsg = (io, data) => {
   }
 }
 
-export { socketNewMsg, socketDeleteMsg };
+/**
+ * @type function
+ * @description socekt new chat create
+ * @param (object) io : socket io ref
+ * @param (object) res : socket event data
+ */
+const socketNewChatCreate = (io, data) => {
+  try {
+    io.sockets.in(`${data.chat.user_id}`).emit("on_new_chat_create", data)
+    io.sockets.in(`${data.chat.friend_id}`).emit("on_new_chat_create", data)
+  } catch (err) {
+
+  }
+}
+
+export { socketNewMsg, socketDeleteMsg, socketNewChatCreate };

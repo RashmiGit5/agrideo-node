@@ -5,7 +5,7 @@ import { commonModel } from '../../common/models/common.model';
 import { getDataTableSetting, } from '../../../../helpers/common-functions';
 import { DATATABLE } from '../../../../config/datatable';
 import { GENERAL } from '../../../../config/general';
-import { socketDeleteMsg } from '../socket/chat.socket';
+import { socketDeleteMsg, socketNewChatCreate } from '../socket/chat.socket';
 
 /**
  * @type function
@@ -17,10 +17,12 @@ import { socketDeleteMsg } from '../socket/chat.socket';
 const chatCreate = (req, res) => {
   try {
     let data = _.assign(req.body, req.query, req.params, req.jwt);
+    let isChatExist = false
     async.waterfall([
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_CHECK_EXIST" }, data, callback),
       (res, callback) => {
         if (res) {
+          isChatExist = true
           callback(null, res)
         } else {
           commonModel({ module_name: "CHAT", method_name: "CHAT_CREATE" }, data, callback)
@@ -76,6 +78,9 @@ const chatCreate = (req, res) => {
           return;
         } else {
           httpResponse.sendSuccess(res, response);
+          if (!isChatExist) {
+            socketNewChatCreate(req.app.get('socketio'), response)
+          }
         }
       });
   } catch (err) {
@@ -414,8 +419,7 @@ const chatMessageDelete = (req, res) => {
         } else {
           httpResponse.sendSuccess(res);
           if (data.deleted_for_everyone) {
-            var io = req.app.get('socketio');
-            socketDeleteMsg(io, data)
+            socketDeleteMsg(req.app.get('socketio'), data)
           }
         }
       });
