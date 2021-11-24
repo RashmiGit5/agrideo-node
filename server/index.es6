@@ -48,6 +48,8 @@ app.get('/', function (req, res) {
 app.use(
   cors({
     exposedHeaders: ["Link"],
+    origin: "http://localhost:3001",
+    methods: ["GET", "POST"],
   })
 );
 

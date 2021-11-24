@@ -76,7 +76,7 @@ const chatCreate = (req, res) => {
         commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, { chat_id: res.insertId || res.id }, callback)
       },
       (res, callback) => {
-        commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { user_chat_id: data.friend_id }, (err, response) => {
+        commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { chat_id: res.insertId || res.id, user_chat_id: data.friend_id }, (err, response) => {
           if (err) {
             callback(err, null)
           } else {
@@ -140,7 +140,7 @@ const chatUserDetail = (req, res) => {
   try {
     let data = _.assign(req.body, req.query, req.params, req.jwt);
     async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { user_chat_id: data.user_id }, callback),
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { chat_id: data.chat_id, user_chat_id: data.user_id }, callback),
     ],
       (err, response) => {
         // err if validation fail
@@ -176,7 +176,7 @@ const chatPaggingListGet = (req, res) => {
           () => { return count < chatListData.length },
           (call) => {
             let user_chat_id = chatListData[count].user_id === data.user_id ? chatListData[count].friend_id : chatListData[count].user_id
-            commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { user_chat_id }, (err, res) => {
+            commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { chat_id: chatListData[count].id, user_chat_id }, (err, res) => {
               if (!err) {
                 chatListData[count].user = res
                 modifiedChatData.push(chatListData[count])
@@ -245,7 +245,7 @@ const chatListSearchMessage = (req, res) => {
           () => { return count < chatListData.length },
           (call) => {
             let user_chat_id = chatListData[count].user_id === data.user_id ? chatListData[count].friend_id : chatListData[count].user_id
-            commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { user_chat_id }, (err, res) => {
+            commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { chat_id: chatListData[count].id, user_chat_id }, (err, res) => {
               if (!err) {
                 chatListData[count].user = res
                 modifiedChatData.push(chatListData[count])
