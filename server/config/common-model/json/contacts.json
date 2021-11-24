@@ -43,7 +43,7 @@
           "KEY": "page_offset"
         }
       ],
-      "SQL": "select fos_user.*, chat_user_status.user_status as chat_user_status from contacts left join chat_user_status on chat_user_status.user_id = contacts.friend_id inner join fos_user on fos_user.id = contacts.friend_id where contacts.user_id = ? #filters# ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
+      "SQL": "select fos_user.*, chat_user_status.user_status as chat_user_status, chat.id as chat_id from contacts left join chat on (chat.user_id = contacts.user_id AND chat.friend_id = contacts.friend_id) OR (chat.user_id = contacts.friend_id AND chat.friend_id = contacts.user_id) left join chat_user_status on chat_user_status.user_id = contacts.friend_id inner join fos_user on fos_user.id = contacts.friend_id where contacts.user_id = ? #filters# ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
     },
     "CONTACTS_SEARCH_GET": {
       "PARAMS": [
@@ -54,9 +54,17 @@
         {
           "TYPE": "string",
           "KEY": "username"
+        },
+        {
+          "TYPE": "string",
+          "KEY": "username"
+        },
+        {
+          "TYPE": "string",
+          "KEY": "username"
         }
       ],
-      "SQL": "select fos_user.* from contacts inner join fos_user on fos_user.id = contacts.friend_id where user_id =  ? and username like ?"
+      "SQL": "select fos_user.*, chat.id as chat_id from contacts left join chat on (chat.user_id = contacts.user_id AND chat.friend_id = contacts.friend_id) OR (chat.user_id = contacts.friend_id AND chat.friend_id = contacts.user_id) inner join fos_user on fos_user.id = contacts.friend_id where contacts.user_id = ? and (first_name like ? OR last_name like ? OR username like ?)"
     }
   }
 }
