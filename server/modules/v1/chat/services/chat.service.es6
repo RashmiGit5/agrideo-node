@@ -210,6 +210,26 @@ const chatPaggingListGet = (req, res) => {
             callback(null, response)
           }
         )
+      },
+      (response, callback) => {
+        let chatListData = response.chat || [], count = 0, modifiedChatData = []
+        async.whilst(
+          () => { return count < chatListData.length },
+          (call) => {
+            commonModel({ module_name: "CHAT", method_name: "CHAT_UNREAD_MSG_COUNT" }, { chat_id: chatListData[count].id, user_id: data.user_id }, (err, res) => {
+              if (!err) {
+                chatListData[count].unread_msg_count = res.unread_msg_count
+                modifiedChatData.push(chatListData[count])
+              }
+              count++
+              call(err, res)
+            })
+          },
+          () => {
+            response.chat = modifiedChatData
+            callback(null, response)
+          }
+        )
       }
     ],
       (err, response) => {
@@ -457,7 +477,7 @@ const messageReceiveStstusUpdate = (io, data) => {
       (err, response) => {
         if (err) {
         } else {
-          socketMessageStatusUpdate(io, { message_id: data.message_id, msg_status: data.is_read ? 3 : 2 })
+          socketMessageStatusUpdate(io, { chat_id: data.chat_id, message_id: data.message_id, msg_status: data.is_read ? 3 : 2 })
         }
       });
   } catch (err) {

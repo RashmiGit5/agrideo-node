@@ -381,6 +381,28 @@
       ],
       "SQL": "select * from chat_status where chat_id = ? and user_id != ?",
       "RESULT": "SINGLE"
+    },
+    "CHAT_UNREAD_MSG_COUNT": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "select count(*) as unread_msg_count from chat_message where msg_status IN (1, 2) AND (delete_status = 0 OR delete_status !=3) AND ((sender_id = ? and delete_status != 1) OR (sender_id != ? AND delete_status != 2)) and chat_id = ? and sender_id != ?",
+      "RESULT": "SINGLE"
     }
   }
 }
