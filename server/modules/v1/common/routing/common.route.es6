@@ -1,5 +1,6 @@
-import { uploadCommonFile } from "../services/common.service";
+import { uploadCommonFile, deleteCommonFile } from "../services/common.service";
 import { uploadTempFileMulter } from '../../../../helpers/file-functions';
+import { checkUserToken } from '../../auth/services/auth.service';
 
 /**
  * @type function
@@ -8,8 +9,9 @@ import { uploadTempFileMulter } from '../../../../helpers/file-functions';
 
 const commonroute = app => {
 
-  app.post("/uploadfile", uploadTempFileMulter.single('file'), uploadCommonFile);
+  app.post("/file/upload", checkUserToken, uploadTempFileMulter.single('file'), uploadCommonFile);
 
+  app.delete("/file/:file_name", checkUserToken, deleteCommonFile);
 
   return app;
 };

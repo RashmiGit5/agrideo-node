@@ -1,4 +1,4 @@
-import { userStatusUpdate, userBlockUnblock, userAutoComplete } from "../services/user.service";
+import { userStatusUpdate, userBlockUnblock, userAutoComplete, userDetailGet } from "../services/user.service";
 import { commonValidator } from '../../common/validators/common.validator';
 import { checkUserToken } from '../../auth/services/auth.service';
 
@@ -14,6 +14,8 @@ const userroute = app => {
   app.post("/user/block-unblock", checkUserToken, commonValidator('v1/schema/user/block-unblock'), userBlockUnblock);
 
   app.get("/user/auto-complete", checkUserToken, commonValidator('v1/schema/user/auto-complete'), userAutoComplete);
+
+  app.get("/user/detail", checkUserToken, userDetailGet);
 
   return app;
 };

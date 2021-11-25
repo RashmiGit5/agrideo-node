@@ -76,6 +76,18 @@
         }
       ],
       "SQL": "select fos_user.* from contacts inner join fos_user on fos_user.id = contacts.friend_id where ((SELECT CONCAT(fos_user.first_name, fos_user.last_name)) like ? OR fos_user.username like ?)AND user_id = ?"
+    },
+    "USER_DETAIL": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "select fos_user.*, chat_user_status.user_status as chat_user_status from fos_user inner join chat_user_status on chat_user_status.user_id = fos_user.id where fos_user.id = ?",
+      "RESULT": "SINGLE",
+      "VALIDATION": "NOT_EXISTS",
+      "ERROR_CODE": "DATA_NOT_FOUND"
     }
   }
 }

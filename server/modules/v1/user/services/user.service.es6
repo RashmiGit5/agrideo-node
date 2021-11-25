@@ -92,5 +92,32 @@ const userAutoComplete = (req, res) => {
   }
 }
 
+/**
+ * @type function
+ * @description auto complete user
+ * @param (object) req : Request information from route()
+ * @param (object) res : Response the result(filename)
+ * @return (undefined)
+ */
+const userDetailGet = (req, res) => {
+  try {
+    let data = _.assign(req.body, req.query, req.params, req.jwt);
+    async.waterfall([
+      (callback) => commonModel({ module_name: "USER", method_name: "USER_DETAIL" }, data, callback),
+    ],
+      (err, response) => {
+        // err if validation fail
+        if (err) {
+          httpResponse.sendFailer(res, err.code, err);
+          return;
+        } else {
+          httpResponse.sendSuccess(res, response);
+        }
+      });
+  } catch (err) {
+    httpResponse.sendFailer(res, 500);
+  }
+}
 
-export { userStatusUpdate, userBlockUnblock, userAutoComplete };
+
+export { userStatusUpdate, userBlockUnblock, userAutoComplete, userDetailGet };

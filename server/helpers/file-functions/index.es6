@@ -8,9 +8,9 @@ import multer from 'multer';
 const Externalpath = require('path');
 
 const FILE_CONFIG = {
-  dev: '',
-  local: __dirname,
-  prod: ''
+  dev: 'server/public/document',
+  local: 'server/public/document',
+  prod: 'dist/public/document/'
 };
 
 const prodFilePath = FILE_CONFIG[global.build];
@@ -191,9 +191,9 @@ const moveFile = (file_name, path, temp_path, previewpath, maincallback) => {
 * @description Function for remove file
 * @returns {undefined}
 */
-const removeFile = (file_name, path, maincallback) => {
+const removeFile = (file_name, maincallback) => {
   if (file_name) {
-    let old_path = prodFilePath + path + file_name;
+    let old_path = prodFilePath + '/' + file_name;
     let error = null;
     async.waterfall([
       (callback) => {
@@ -317,7 +317,7 @@ const readwriteFile = (readfilePath, writefilePath, server_path, file_name, main
 
 const tempFileStorage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, 'dist/public/tempfiles');
+    callback(null, prodFilePath);
   },
   filename: (req, file, filenamecallback) => {
     filenamecallback(null, uuid() + '.' + file.originalname.split('.').pop());

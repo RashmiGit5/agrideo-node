@@ -1,2 +1,2 @@
-global.build = 'stag';
+global.build = 'dev';
 require('./dist')

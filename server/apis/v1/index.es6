@@ -1,5 +1,5 @@
 import express from 'express';
-import { contactsroute, chatroute, userroute } from '../../routes/v1';
+import { contactsroute, chatroute, userroute, commonroute } from '../../routes/v1';
 
 /**
  * @type function
@@ -10,6 +10,7 @@ export default () => {
   const contactsapi = contactsroute(api);
   const chatapi = chatroute(api);
   const userapi = userroute(api);
+  const commonapi = commonroute(api);
 
   // perhaps expose some API metadata at the root
   api.get('/', (req, res) => {
