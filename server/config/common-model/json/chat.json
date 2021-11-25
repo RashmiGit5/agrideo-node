@@ -353,7 +353,7 @@
           "KEY": "user_id"
         }
       ],
-      "SQL": "update chat_status set  where id = ?"
+      "SQL": "update chat_status set is_unread = ? where chat_id = ? and user_id=?"
     },
     "CHAT_STATUS_CREATE": {
       "PARAMS": [

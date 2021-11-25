@@ -1,5 +1,6 @@
 import { userStatusUpdate, userBlockUnblock, userAutoComplete } from "../services/user.service";
 import { commonValidator } from '../../common/validators/common.validator';
+import { checkUserToken } from '../../auth/services/auth.service';
 
 /**
  * @type function
@@ -8,11 +9,11 @@ import { commonValidator } from '../../common/validators/common.validator';
 
 const userroute = app => {
 
-  app.patch("/user/status", commonValidator('v1/schema/user/status-update'), userStatusUpdate);
+  app.patch("/user/status", checkUserToken, commonValidator('v1/schema/user/status-update'), userStatusUpdate);
 
-  app.post("/user/block-unblock", commonValidator('v1/schema/user/block-unblock'), userBlockUnblock);
+  app.post("/user/block-unblock", checkUserToken, commonValidator('v1/schema/user/block-unblock'), userBlockUnblock);
 
-  app.get("/user/auto-complete", commonValidator('v1/schema/user/auto-complete'), userAutoComplete);
+  app.get("/user/auto-complete", checkUserToken, commonValidator('v1/schema/user/auto-complete'), userAutoComplete);
 
   return app;
 };

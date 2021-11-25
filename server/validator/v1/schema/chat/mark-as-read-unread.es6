@@ -9,9 +9,6 @@ const schema = {
     chat_id: {
       format: "number"
     },
-    user_id: {
-      format: "number"
-    }
   }
 };
 

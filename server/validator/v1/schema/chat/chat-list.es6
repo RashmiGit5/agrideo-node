@@ -1,16 +1,12 @@
 
 const schema = {
   type: "object",
-  required: ["user_id"],
+  required: [],
   properties: {
-    user_id: {
-      format: "numberOnly"
-    },
     page_index: {
       format: "numberOnly"
     },
     page_size: {
-
       format: "numberOnly"
     },
     sort_order: {

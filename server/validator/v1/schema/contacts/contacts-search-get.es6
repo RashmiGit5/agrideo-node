@@ -1,10 +1,10 @@
 
 const schema = {
   type: "object",
-  required: ["user_id"],
+  required: ["username"],
   properties: {
-    user_id: {
-      format: "numberOnly"
+    username: {
+      format: "string"
     }
   }
 };

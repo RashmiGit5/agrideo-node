@@ -3,6 +3,7 @@ import {
   chatListSearchMessage, chatListSearchContact, chatMarkAsReadUnread
 } from "../services/chat.service";
 import { commonValidator } from '../../common/validators/common.validator';
+import { checkUserToken } from '../../auth/services/auth.service';
 
 /**
  * @type function
@@ -11,23 +12,23 @@ import { commonValidator } from '../../common/validators/common.validator';
 
 const chatroute = app => {
 
-  app.post("/chat", commonValidator('v1/schema/chat/chat-list'), chatPaggingListGet);
+  app.post("/chat", checkUserToken, commonValidator('v1/schema/chat/chat-list'), chatPaggingListGet);
 
-  app.post("/chat/create", commonValidator('v1/schema/chat/chat-create'), chatCreate);
+  app.post("/chat/create", checkUserToken, commonValidator('v1/schema/chat/chat-create'), chatCreate);
 
-  app.post("/chat/search-message", commonValidator('v1/schema/chat/chat-list-search'), chatListSearchMessage);
+  app.get("/chat/search-message", checkUserToken, commonValidator('v1/schema/chat/chat-list-search'), chatListSearchMessage);
 
-  app.post("/chat/search-contact", commonValidator('v1/schema/chat/chat-list-search'), chatListSearchContact);
+  app.get("/chat/search-contact", checkUserToken, commonValidator('v1/schema/chat/chat-list-search'), chatListSearchContact);
 
-  app.post("/chat/get-message", commonValidator('v1/schema/chat/chat-get-message'), chatMessageGet);
+  app.post("/chat/get-message", checkUserToken, commonValidator('v1/schema/chat/chat-get-message'), chatMessageGet);
 
-  app.post("/chat/message/delete", commonValidator('v1/schema/chat/chat-message-delete'), chatMessageDelete);
+  app.post("/chat/message/delete", checkUserToken, commonValidator('v1/schema/chat/chat-message-delete'), chatMessageDelete);
 
-  app.post("/chat/mark-as-read-unread", commonValidator('v1/schema/chat/mark-as-read-unread'), chatMarkAsReadUnread);
+  app.post("/chat/mark-as-read-unread", checkUserToken, commonValidator('v1/schema/chat/mark-as-read-unread'), chatMarkAsReadUnread);
 
-  app.get("/chat/:chat_id/user/:user_id", commonValidator('v1/schema/chat/chat-user-detail'), chatUserDetail);
+  app.get("/chat/:chat_id/user/:user_id", checkUserToken, commonValidator('v1/schema/chat/chat-user-detail'), chatUserDetail);
 
-  app.get("/chat/:chat_id", commonValidator('v1/schema/chat/chat-detail'), chatDetail);
+  app.get("/chat/:chat_id", checkUserToken, commonValidator('v1/schema/chat/chat-detail'), chatDetail);
 
   return app;
 };

@@ -30,6 +30,7 @@
     "fs": "0.0.1-security",
     "http": "0.0.1-security",
     "is-my-json-valid": "^2.20.4",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "mocha": "^2.5.3",
     "moment": "^2.27.0",

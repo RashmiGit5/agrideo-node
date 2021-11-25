@@ -496,7 +496,7 @@ const chatMarkAsReadUnread = (req, res) => {
   try {
     let data = _.assign(req.body, req.query, req.params, req.jwt);
     async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MARK_AS_READ_UNREAD" }, { ...data, status: data.mark_as_read ? 0 : 1 }, callback)
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MARK_AS_READ_UNREAD" }, { ...data, status: data.mark_as_read ? 1 : null }, callback)
     ],
       (err, response) => {
         // err if validation fail

@@ -2,11 +2,8 @@ import { DATATABLE } from "../../../../config/datatable";
 
 const schema = {
   type: "object",
-  required: ["user_id"],
+  required: [],
   properties: {
-    user_id: {
-      format: "numberOnly"
-    },
     page_index: {
       format: "numberOnly"
     },

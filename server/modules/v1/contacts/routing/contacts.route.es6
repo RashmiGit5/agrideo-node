@@ -1,5 +1,6 @@
 import { contactsPaggingListGet, contactsSearchGet } from "../services/contacts.service";
 import { commonValidator } from '../../common/validators/common.validator';
+import { checkUserToken } from '../../auth/services/auth.service';
 
 /**
  * @type function
@@ -8,9 +9,9 @@ import { commonValidator } from '../../common/validators/common.validator';
 
 const contactsroute = app => {
 
-  app.post("/contact/list", commonValidator('v1/schema/contacts/contacts-pagging-get'), contactsPaggingListGet);
+  app.post("/contact/list", checkUserToken, commonValidator('v1/schema/contacts/contacts-pagging-get'), contactsPaggingListGet);
 
-  app.get("/contact/search", commonValidator('v1/schema/contacts/contacts-search-get'), contactsSearchGet);
+  app.get("/contact/search", checkUserToken, commonValidator('v1/schema/contacts/contacts-search-get'), contactsSearchGet);
 
   return app;
 };

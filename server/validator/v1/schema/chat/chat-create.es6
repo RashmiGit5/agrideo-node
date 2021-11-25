@@ -1,11 +1,8 @@
 
 const schema = {
   type: "object",
-  required: ["user_id", "friend_id"],
+  required: ["friend_id"],
   properties: {
-    user_id: {
-      format: "numberOnly"
-    },
     friend_id: {
       format: "numberOnly"
     }
