@@ -517,7 +517,30 @@ const chatMarkAsReadUnread = (req, res) => {
   }
 }
 
+
+/**
+ * @type function
+ * @description Read all chat message
+ * @param (object) io : socket io ref
+ * @param (object) res : socket event data
+ */
+const messageReadAllMessage = (io, data) => {
+  try {
+    async.waterfall([
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_READ_ALL_MESSAGE" }, data, callback),
+    ],
+      (err, response) => {
+        if (err) {
+        } else {
+          socketMessageStatusUpdate(io, { chat_id: data.chat_id, msg_status: 3 })
+        }
+      });
+  } catch (err) {
+  }
+}
+
+
 export {
   chatCreate, chatDetail, chatUserDetail, chatPaggingListGet, chatListSearchMessage, chatSendMsg, chatMessageGet,
-  chatMessageDelete, chatListSearchContact, messageReceiveStstusUpdate, chatMarkAsReadUnread
+  chatMessageDelete, chatListSearchContact, messageReceiveStstusUpdate, chatMarkAsReadUnread, messageReadAllMessage
 };

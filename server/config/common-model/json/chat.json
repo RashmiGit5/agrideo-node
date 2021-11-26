@@ -417,6 +417,15 @@
       ],
       "SQL": "select count(*) as unread_msg_count from chat_message where msg_status IN (1, 2) AND (delete_status = 0 OR delete_status !=3) AND ((sender_id = ? and delete_status != 1) OR (sender_id != ? AND delete_status != 2)) and chat_id = ? and sender_id != ?",
       "RESULT": "SINGLE"
+    },
+    "CHAT_READ_ALL_MESSAGE": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        }
+      ],
+      "SQL": "update chat_message set msg_status = 3, modified_at = now() where chat_id = ? and msg_status != 4 and msg_status != 3"
     }
   }
 }

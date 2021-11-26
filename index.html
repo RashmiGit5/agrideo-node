@@ -49,11 +49,16 @@
         socket.emit('message_received', { "chat_id": 1, "message_id": [113, 114, 115], "is_read": false });
     }
 
+    var onPressReadAll = () => {
+        socket.emit('message_read_all', { "chat_id": 1 });
+    }
+
 </script>
 
 <body>
     <button onclick="onPressBtn()" type="button">Send Message</button>
     <button onclick="onPressReceive()" type="button">Message Received</button>
+    <button onclick="onPressReadAll()" type="button">Message Read All</button>
 </body>
 
 </html>
