@@ -382,6 +382,20 @@
       "SQL": "select * from chat_status where chat_id = ? and user_id != ?",
       "RESULT": "SINGLE"
     },
+    "CHAT_SENDER_STATUS_DETAIL": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "select * from chat_status where chat_id = ? and user_id = ?",
+      "RESULT": "SINGLE"
+    },
     "CHAT_UNREAD_MSG_COUNT": {
       "PARAMS": [
         {

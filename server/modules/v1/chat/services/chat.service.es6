@@ -349,14 +349,18 @@ const chatListSearchContact = (req, res) => {
  */
 const chatSendMsg = (io, data) => {
   try {
-
+    let isSenderBlocked = false
     async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, data, callback),
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_SENDER_STATUS_DETAIL" }, { ...data, user_id: data.sender_id }, callback),
+      (res, callback) => {
+        isSenderBlocked = !!res.is_blocked
+        commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, data, callback)
+      },
       (res, callback) => {
         commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_DETAIL" }, { ...data, user_id: data.sender_id }, (err, resp) => callback(err, { chatDetail: { ...res, chatStatus: resp } }))
       },
       (res, callback) => {
-        data.msg_status = !!res.chatDetail.chatStatus.is_blocked ? 4 : 1
+        data.msg_status = isSenderBlocked || !!res.chatDetail.chatStatus.is_blocked ? 4 : 1
         commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp }))
       },
       (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MSG_FROM_ID" }, { id: res.messageDetail.insertId }, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp })),
@@ -365,6 +369,7 @@ const chatSendMsg = (io, data) => {
       if (err) {
       } else {
         response.messageDetail.temp_id = data.temp_id
+        response.isSenderBlocked = isSenderBlocked
         socketNewMsg(io, response)
       }
     });

@@ -13,7 +13,12 @@ const port = 5001;
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, { /* options */ });
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:3001",
+    methods: ["GET", "POST"],
+  }
+});
 
 io.on("connection", (socket) => {
   console.log('A user connected');
@@ -47,9 +52,7 @@ app.get('/', function (req, res) {
 // 3rd party middleware
 app.use(
   cors({
-    exposedHeaders: ["Link"],
-    origin: "http://localhost:3001",
-    methods: ["GET", "POST"],
+    exposedHeaders: ["Link"]
   })
 );
 
