@@ -5,7 +5,27 @@ import { GENERAL } from '../../config/general';
 import async from 'async';
 import uuid from 'uuid/v4';
 import multer from 'multer';
-const Externalpath = require('path');
+import multerS3 from 'multer-s3';
+const S3 = require('aws-sdk/clients/s3');
+const AWS = require('aws-sdk');
+const wasabiEndpoint = new AWS.Endpoint('s3.ap-northeast-1.wasabisys.com');
+
+const accessKeyId = 'DR8JVB7CEDG64X7JNQKP';
+const secretAccessKey = 'EcTmtzevdyFyvil4pF1p4qTtctIp5BYGhmWF6pUQ';
+
+const s3 = new S3({
+  endpoint: wasabiEndpoint,
+  region: 'ap-northeast-1',
+  accessKeyId,
+  secretAccessKey,
+  ACL: 'public-read',
+});
+
+AWS.config.update({
+  secretAccessKey,
+  accessKeyId,
+  region: 'ap-northeast-1'
+});
 
 const FILE_CONFIG = {
   dev: 'server/public/document',
@@ -193,22 +213,12 @@ const moveFile = (file_name, path, temp_path, previewpath, maincallback) => {
 */
 const removeFile = (file_name, maincallback) => {
   if (file_name) {
-    let old_path = prodFilePath + '/' + file_name;
-    let error = null;
-    async.waterfall([
-      (callback) => {
-        fs.unlink(old_path, (err, data) => {
-          if (err) {
-            error = ErrorManager.getHttpError('SYSTEM_ERROR');
-            callback(error, data, err);
-          } else {
-            callback(error, data);
-          }
-        });
-      }],
-      (err, data, error_detail) => {
-        maincallback(err, { file_name }, error_detail);
-      });
+    s3.deleteObject({
+      Bucket: 'agrideo-chat-document',
+      Key: file_name
+    }, (err, data) => {
+      maincallback(err, data);
+    });
   } else {
     maincallback(null, null);
   }
@@ -324,6 +334,14 @@ const tempFileStorage = multer.diskStorage({
   }
 });
 
-const uploadTempFileMulter = multer({ storage: tempFileStorage });
+const uploadTempFileMulter = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: 'agrideo-chat-document',
+    key: function (req, file, cb) {
+      cb(null, uuid() + '.' + file.originalname.split('.').pop());
+    }
+  })
+});
 
 export { uploadFile, uploadTempFile, moveFile, removeFile, writeFile, writeFileWithoutEncoding, readwriteFile, uploadTempFileMulter };

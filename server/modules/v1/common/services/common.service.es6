@@ -16,11 +16,10 @@ const uploadCommonFile = (req, res) => {
   try {
     async.waterfall([
       (callback) => {
-        let response = {
-          name: req.file.filename,
-          path: process.env.API_URL || 'http://192.168.0.7:9010' + GENERAL.TEMP_FILE_PATH.FILE_SERVER_PATH + req.file.filename,
-        }
-        callback(null, response);
+        callback(null, {
+          name: req.file.key,
+          path: req.file.location,
+        });
       }
     ],
       (err, data) => {
