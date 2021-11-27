@@ -532,7 +532,7 @@ const messageReadAllMessage = (io, data) => {
       (err, response) => {
         if (err) {
         } else {
-          socketMessageStatusUpdate(io, { chat_id: data.chat_id, msg_status: 3 })
+          socketMessageStatusUpdate(io, { ...data, msg_status: 3 })
         }
       });
   } catch (err) {

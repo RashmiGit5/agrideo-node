@@ -423,9 +423,13 @@
         {
           "TYPE": "number",
           "KEY": "chat_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
         }
       ],
-      "SQL": "update chat_message set msg_status = 3, modified_at = now() where chat_id = ? and msg_status != 4 and msg_status != 3"
+      "SQL": "update chat_message set msg_status = 3, modified_at = now() where chat_id = ? and sender_id != ? and msg_status != 4 and msg_status != 3"
     }
   }
 }
