@@ -57,8 +57,8 @@ const socketNewChatCreate = (io, data) => {
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { chat_id: data.chat.id, user_chat_id: data.chat.user_id }, callback),
     ],
       (err, response) => {
-        io.sockets.in(`${data.chat.user_id}`).emit("on_new_chat_create", { chat: data.chat, user: response })
-        io.sockets.in(`${data.chat.friend_id}`).emit("on_new_chat_create", data)
+        io.sockets.in(`${data.chat.user_id}`).emit("on_new_chat_create", data)
+        io.sockets.in(`${data.chat.friend_id}`).emit("on_new_chat_create", { chat: data.chat, user: response })
       });
   } catch (err) {
 
