@@ -113,7 +113,7 @@
           "KEY": "page_offset"
         }
       ],
-      "SQL": "select * from chat where user_id = ? OR friend_id = ? ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
+      "SQL": "select chat.*, contacts.id as contacts_id from chat left join contacts on contacts.user_id = chat.user_id and contacts.friend_id = chat.friend_id where chat.user_id = ? OR chat.friend_id = ? ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
     },
     "CHAT_PAGGING_COUNT_GET": {
       "PARAMS": [
@@ -394,7 +394,9 @@
         }
       ],
       "SQL": "select * from chat_status where chat_id = ? and user_id = ?",
-      "RESULT": "SINGLE"
+      "RESULT": "SINGLE",
+      "VALIDATION": "NOT_EXISTS",
+      "ERROR_CODE": "DATA_NOT_FOUND"
     },
     "CHAT_UNREAD_MSG_COUNT": {
       "PARAMS": [
@@ -430,6 +432,48 @@
         }
       ],
       "SQL": "update chat_message set msg_status = 3, modified_at = now() where chat_id = ? and sender_id != ? and msg_status != 4 and msg_status != 3"
+    },
+    "CHAT_GET_ALL_SEND_MESSAGE": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "numberarray",
+          "KEY": "chat_msg_status"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "SELECT chat_message.id FROM chat INNER JOIN chat_message ON chat.id = chat_message.chat_id and sender_id != ? and msg_status in (?) where chat.user_id = ? OR chat.friend_id = ?"
+    },
+    "CHAT_RECEIVE_ALL_MESSAGE": {
+      "PARAMS": [
+        {
+          "TYPE": "numberarray",
+          "KEY": "chat_msg_id"
+        }
+      ],
+      "SQL": "UPDATE chat_message set msg_status = 2, modified_at = now() where id in (?)"
+    },
+    "CHAT_DETAIL_WITH_USER": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        }
+      ],
+      "SQL": "select chat.*, contacts.id as contacts_id from chat left join contacts on contacts.user_id = chat.user_id and contacts.friend_id = chat.friend_id where chat.id = ? ",
+      "RESULT": "SINGLE",
+      "VALIDATION": "NOT_EXISTS",
+      "ERROR_CODE": "DATA_NOT_FOUND"
     }
   }
 }

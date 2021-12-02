@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node build.js",
+    "server-start": "pm2 start build.js",
     "babel-start": "babel-node index.js",
     "build": "babel server -d dist",
     "lint": "eslint server/** --ext .es6,.json --fix --ignore-pattern server/public/** --ignore-pattern server/db/**"

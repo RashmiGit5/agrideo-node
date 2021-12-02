@@ -7,7 +7,7 @@ import apiV1 from "./apis/v1";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
-import { chatSendMsg, messageReceiveStstusUpdate, messageReadAllMessage } from "./modules/v1/chat/services/chat.service"
+import { chatSendMsg, messageReceiveStstusUpdate, messageReadAllMessage, messageReceivedAllMessage } from "./modules/v1/chat/services/chat.service"
 
 const port = 5001;
 
@@ -36,6 +36,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on('join', function (data) {
+    messageReceivedAllMessage(io, { user_id: data })
     socket.join(`${data}`)
   });
 

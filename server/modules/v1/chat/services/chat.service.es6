@@ -539,8 +539,97 @@ const messageReadAllMessage = (io, data) => {
   }
 }
 
+/**
+ * @type function
+ * @description Receive all chat message
+ * @param (object) io : socket io ref
+ * @param (object) res : socket event data
+ */
+const messageReceivedAllMessage = (io, data) => {
+  try {
+    async.waterfall([
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_GET_ALL_SEND_MESSAGE" }, { ...data, chat_msg_status: [1] }, callback),
+      (res, callback) => {
+        let chat_msg_id = (res || []).map(ele => ele.id)
+        console.log("chat_msg_id -----> " + JSON.stringify(chat_msg_id));
+        if (chat_msg_id.length > 0) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_RECEIVE_ALL_MESSAGE" }, { chat_msg_id }, callback)
+        } else {
+          callback({ error: true }, null)
+        }
+      },
+    ],
+      (err, response) => {
+        console.log("err ----> " + JSON.stringify(err));
+        if (err) {
+        } else {
+          socketMessageStatusUpdate(io, { ...data, msg_status: 2 })
+        }
+      });
+  } catch (err) {
+  }
+}
+
+
+/**
+ * @type function
+ * @description Chat get total unread coount
+ * @param (object) req : Request information from route()
+ * @param (object) res : Response the result(filename)
+ * @return (undefined)
+ */
+const chatGetTotalUnreadMsgCount = (req, res) => {
+  try {
+    let data = _.assign(req.body, req.query, req.params, req.jwt);
+    async.waterfall([
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_GET_ALL_SEND_MESSAGE" }, { ...data, chat_msg_status: [1, 2] }, callback),
+    ],
+      (err, response) => {
+        // err if validation fail
+        if (err) {
+          httpResponse.sendFailer(res, err.code, err);
+          return;
+        } else {
+          httpResponse.sendSuccess(res, { count: (response || []).length });
+        }
+      });
+  } catch (err) {
+  }
+}
+
+
+/**
+ * @type function
+ * @description Chat detail as per user
+ * @param (object) req : Request information from route()
+ * @param (object) res : Response the result(filename)
+ * @return (undefined)
+ */
+const chatDetailWithUser = (req, res) => {
+  try {
+    let data = _.assign(req.body, req.query, req.params, req.jwt);
+    async.waterfall([
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL_WITH_USER" }, data, callback),
+      (response, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { chat_id: response.id, user_chat_id: response.user_id === data.user_id ? response.friend_id : response.user_id }, (err, res) => callback(err, { ...response, user: res })),
+      (response, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_LAST_MSG_GET" }, { chat_id: response.id, user_id: data.user_id }, (err, res) => callback(err, { ...response, message: res })),
+      (response, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_UNREAD_MSG_COUNT" }, { chat_id: response.id, user_id: data.user_id }, (err, res) => callback(err, { ...response, unread_msg_count: res.unread_msg_count }))
+    ],
+      (err, response) => {
+        // err if validation fail
+        if (err) {
+          httpResponse.sendFailer(res, err.code, err);
+          return;
+        } else {
+          httpResponse.sendSuccess(res, response);
+        }
+      });
+  } catch (err) {
+    httpResponse.sendFailer(res, 500);
+  }
+}
 
 export {
   chatCreate, chatDetail, chatUserDetail, chatPaggingListGet, chatListSearchMessage, chatSendMsg, chatMessageGet,
-  chatMessageDelete, chatListSearchContact, messageReceiveStstusUpdate, chatMarkAsReadUnread, messageReadAllMessage
+  chatMessageDelete, chatListSearchContact, messageReceiveStstusUpdate, chatMarkAsReadUnread, messageReadAllMessage,
+  messageReceivedAllMessage, chatGetTotalUnreadMsgCount, chatDetailWithUser
 };
