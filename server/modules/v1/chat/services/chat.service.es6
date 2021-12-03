@@ -19,71 +19,10 @@ const chatCreate = (req, res) => {
     let data = _.assign(req.body, req.query, req.params, req.jwt);
     let isChatExist = false
     async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_CHECK_EXIST" }, data, callback),
-      (res, callback) => {
-        if (res) {
-          isChatExist = true
-          callback(null, res)
-        } else {
-          commonModel({ module_name: "CHAT", method_name: "CHAT_CREATE" }, data, callback)
-        }
-      },
-      (res, callback) => {
-        if (res.insertId) {
-          commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_GET" }, { user_id: data.user_id }, (err, response) => {
-            if (err) {
-              callback(err, null)
-            } else if (!response) {
-              commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_CREATE" }, { user_id: data.user_id, user_status: 1 }, (err, response) => callback(err, res))
-            } else {
-              callback(null, res)
-            }
-          })
-        } else {
-          callback(null, res)
-        }
-      },
-      (res, callback) => {
-        if (res.insertId) {
-          commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_GET" }, { user_id: data.friend_id }, (err, response) => {
-            if (err) {
-              callback(err, null)
-            } else if (!response) {
-              commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_CREATE" }, { user_id: data.friend_id, user_status: 1 }, (err, response) => callback(err, res))
-            } else {
-              callback(null, res)
-            }
-          })
-        } else {
-          callback(null, res)
-        }
-      },
-      (res, callback) => {
-        if (!isChatExist) {
-          commonModel({ module_name: "CHAT", method_name: "CHAT_STATUS_CREATE" }, { chat_id: res.insertId || res.id, user_id: data.user_id }, (err, response) => callback(null, res))
-        } else {
-          callback(null, res)
-        }
-      },
-      (res, callback) => {
-        if (!isChatExist) {
-          commonModel({ module_name: "CHAT", method_name: "CHAT_STATUS_CREATE" }, { chat_id: res.insertId || res.id, user_id: data.friend_id }, (err, response) => callback(null, res))
-        } else {
-          callback(null, res)
-        }
-      },
-      (res, callback) => {
-        commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, { chat_id: res.insertId || res.id }, callback)
-      },
-      (res, callback) => {
-        commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { chat_id: res.insertId || res.id, user_chat_id: data.friend_id }, (err, response) => {
-          if (err) {
-            callback(err, null)
-          } else {
-            callback(null, { chat: res, user: response })
-          }
-        })
-      },
+      (callback) => createChatSP(data, (err, response, chatExist) => {
+        isChatExist = chatExist
+        callback(err, response)
+      }),
     ],
       (err, response) => {
         // err if validation fail
@@ -101,6 +40,88 @@ const chatCreate = (req, res) => {
     httpResponse.sendFailer(res, 500);
   }
 }
+
+
+/**
+ * @type function
+ * @description Create Chat
+ * @param (object) data : data from api
+ * @param (object) callback : return callback
+ * @return (undefined)
+ */
+const createChatSP = (data, callback) => {
+  let isChatExist = false
+  async.waterfall([
+    (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_CHECK_EXIST" }, data, callback),
+    (res, callback) => {
+      if (res) {
+        isChatExist = true
+        callback(null, res)
+      } else {
+        commonModel({ module_name: "CHAT", method_name: "CHAT_CREATE" }, data, callback)
+      }
+    },
+    (res, callback) => {
+      if (res.insertId) {
+        commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_GET" }, { user_id: data.user_id }, (err, response) => {
+          if (err) {
+            callback(err, null)
+          } else if (!response) {
+            commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_CREATE" }, { user_id: data.user_id, user_status: 1 }, (err, response) => callback(err, res))
+          } else {
+            callback(null, res)
+          }
+        })
+      } else {
+        callback(null, res)
+      }
+    },
+    (res, callback) => {
+      if (res.insertId) {
+        commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_GET" }, { user_id: data.friend_id }, (err, response) => {
+          if (err) {
+            callback(err, null)
+          } else if (!response) {
+            commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_CREATE" }, { user_id: data.friend_id, user_status: 1 }, (err, response) => callback(err, res))
+          } else {
+            callback(null, res)
+          }
+        })
+      } else {
+        callback(null, res)
+      }
+    },
+    (res, callback) => {
+      if (!isChatExist) {
+        commonModel({ module_name: "CHAT", method_name: "CHAT_STATUS_CREATE" }, { chat_id: res.insertId || res.id, user_id: data.user_id }, (err, response) => callback(null, res))
+      } else {
+        callback(null, res)
+      }
+    },
+    (res, callback) => {
+      if (!isChatExist) {
+        commonModel({ module_name: "CHAT", method_name: "CHAT_STATUS_CREATE" }, { chat_id: res.insertId || res.id, user_id: data.friend_id }, (err, response) => callback(null, res))
+      } else {
+        callback(null, res)
+      }
+    },
+    (res, callback) => {
+      commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, { chat_id: res.insertId || res.id }, callback)
+    },
+    (res, callback) => {
+      commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { chat_id: res.insertId || res.id, user_chat_id: data.friend_id }, (err, response) => {
+        if (err) {
+          callback(err, null)
+        } else {
+          callback(null, { chat: res, user: response })
+        }
+      })
+    },
+  ], (err, response) => {
+    callback(err, response, isChatExist)
+  });
+}
+
 
 /**
  * @type function
@@ -629,7 +650,7 @@ const chatDetailWithUser = (req, res) => {
 }
 
 export {
-  chatCreate, chatDetail, chatUserDetail, chatPaggingListGet, chatListSearchMessage, chatSendMsg, chatMessageGet,
+  chatCreate, createChatSP, chatDetail, chatUserDetail, chatPaggingListGet, chatListSearchMessage, chatSendMsg, chatMessageGet,
   chatMessageDelete, chatListSearchContact, messageReceiveStstusUpdate, chatMarkAsReadUnread, messageReadAllMessage,
   messageReceivedAllMessage, chatGetTotalUnreadMsgCount, chatDetailWithUser
 };

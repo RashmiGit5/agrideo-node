@@ -4,6 +4,7 @@ import httpResponse from '../../../../helpers/http-response';
 import { commonModel } from '../../common/models/common.model';
 import { getDataTableSetting, } from '../../../../helpers/common-functions';
 import { DATATABLE } from '../../../../config/datatable';
+import { createChatSP } from '../../chat/services/chat.service'
 
 /**
  * @type function
@@ -78,4 +79,44 @@ const contactsSearchGet = (req, res) => {
   }
 }
 
-export { contactsPaggingListGet, contactsSearchGet };
+
+/**
+ * @type function
+ * @description Create all contact chat
+ * @param (object) req : Request information from route()
+ * @param (object) res : Response the result(filename)
+ * @return (undefined)
+ */
+const createChatForAllContact = (req, res) => {
+  try {
+    async.waterfall([
+      (callback) => commonModel({ module_name: "CONTACTS", method_name: "CONTACTS_GET_ALL_IN_NOT_CHAT" }, {}, callback),
+      (response, callback) => {
+        let count = 0
+        async.whilst(
+          () => { return count < response.length },
+          (listCallback) => {
+            createChatSP(response[count], (err, response) => {
+              listCallback(err, response)
+              count++
+            })
+          },
+          callback
+        )
+      }
+    ],
+      (err, response) => {
+        // err if validation fail
+        if (err) {
+          httpResponse.sendFailer(res, err.code, err);
+          return;
+        } else {
+          httpResponse.sendSuccess(res);
+        }
+      });
+  } catch (err) {
+    httpResponse.sendFailer(res, 500);
+  }
+}
+
+export { contactsPaggingListGet, contactsSearchGet, createChatForAllContact };

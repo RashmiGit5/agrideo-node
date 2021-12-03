@@ -65,6 +65,12 @@
         }
       ],
       "SQL": "select fos_user.*, chat.id as chat_id from contacts left join chat on (chat.user_id = contacts.user_id AND chat.friend_id = contacts.friend_id) OR (chat.user_id = contacts.friend_id AND chat.friend_id = contacts.user_id) inner join fos_user on fos_user.id = contacts.friend_id where contacts.user_id = ? and (first_name like ? OR last_name like ? OR username like ?)"
+    },
+    "CONTACTS_GET_ALL_IN_NOT_CHAT": {
+      "PARAMS": [],
+      "SQL": "select * from contacts WHERE (select count(*) from chat WHERE chat.user_id in (contacts.user_id, contacts.friend_id) AND chat.friend_id in (contacts.user_id, contacts.friend_id)) = 0 and (select count(*) FROM contacts as cf WHERE cf.user_id = contacts.friend_id and cf.friend_id = contacts.user_id) != 0",
+      "VALIDATION": "NOT_EXISTS",
+      "ERROR_CODE": "DATA_NOT_FOUND"
     }
   }
 }
