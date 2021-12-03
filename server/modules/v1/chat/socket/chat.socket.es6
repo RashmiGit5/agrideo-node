@@ -53,13 +53,21 @@ const socketDeleteMsg = (io, response, data) => {
  */
 const socketNewChatCreate = (io, data) => {
   try {
-    async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { chat_id: data.chat.id, user_chat_id: data.chat.user_id }, callback),
-    ],
-      (err, response) => {
-        io.sockets.in(`${data.chat.user_id}`).emit("on_new_chat_create", data)
-        io.sockets.in(`${data.chat.friend_id}`).emit("on_new_chat_create", { chat: data.chat, user: response })
-      });
+
+    if (data.isChatExist && data.from_symphony) {
+      io.sockets.in(`${data.chat.user_id}`).emit("on_contact_request_accept", { chat_id: data.chat.id })
+      io.sockets.in(`${data.chat.friend_id}`).emit("on_contact_request_accept", { chat_id: data.chat.id })
+    }
+
+    if (!data.isChatExist) {
+      async.waterfall([
+        (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { chat_id: data.chat.id, user_chat_id: data.chat.user_id }, callback),
+      ],
+        (err, response) => {
+          io.sockets.in(`${data.chat.user_id}`).emit("on_new_chat_create", data)
+          io.sockets.in(`${data.chat.friend_id}`).emit("on_new_chat_create", { chat: data.chat, user: response })
+        });
+    }
   } catch (err) {
 
   }

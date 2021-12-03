@@ -49,9 +49,9 @@ app.set('socketio', io);
 
 httpServer.listen(3000);
 
-app.get('/', function (req, res) {
-  res.sendFile('/Users/mini-1/Projects/Agrido/agrideo-node/index.html');
-});
+// app.get('/', function (req, res) {
+//   res.sendFile('/Users/mini-1/Projects/Agrido/agrideo-node/index.html');
+// });
 
 
 // 3rd party middleware

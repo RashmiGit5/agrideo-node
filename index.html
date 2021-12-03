@@ -34,6 +34,10 @@
         console.log("on_message_status_update -------> " + JSON.stringify(data));
     });
 
+    socket.on('on_contact_request_accept', function (data) {
+        console.log("on_contact_request_accept -------> " + JSON.stringify(data));
+    });
+
     var onPressBtn = () => {
         socket.emit('send_message', {
             "temp_id": 351635,

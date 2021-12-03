@@ -31,8 +31,8 @@ const chatCreate = (req, res) => {
           return;
         } else {
           httpResponse.sendSuccess(res, response);
-          if (!isChatExist) {
-            socketNewChatCreate(req.app.get('socketio'), response)
+          if (!isChatExist || data.from_symphony) {
+            socketNewChatCreate(req.app.get('socketio'), { ...response, from_symphony: data.from_symphony, isChatExist: isChatExist })
           }
         }
       });
@@ -572,7 +572,6 @@ const messageReceivedAllMessage = (io, data) => {
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_GET_ALL_SEND_MESSAGE" }, { ...data, chat_msg_status: [1] }, callback),
       (res, callback) => {
         let chat_msg_id = (res || []).map(ele => ele.id)
-        console.log("chat_msg_id -----> " + JSON.stringify(chat_msg_id));
         if (chat_msg_id.length > 0) {
           commonModel({ module_name: "CHAT", method_name: "CHAT_RECEIVE_ALL_MESSAGE" }, { chat_msg_id }, callback)
         } else {
@@ -581,7 +580,6 @@ const messageReceivedAllMessage = (io, data) => {
       },
     ],
       (err, response) => {
-        console.log("err ----> " + JSON.stringify(err));
         if (err) {
         } else {
           socketMessageStatusUpdate(io, { ...data, msg_status: 2 })
