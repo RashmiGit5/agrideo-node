@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `chat_message` (
   `chat_id` int(11) NOT NULL,
   `msg` text DEFAULT NULL,
   `attachment_url` varchar(512) DEFAULT NULL,
+  `attachment_name` text DEFAULT NULL,
   `attachment_type` varchar(256) DEFAULT NULL,
   `sender_id` int(11) NOT NULL,
   `msg_status` tinyint(2) NOT NULL DEFAULT 1 COMMENT '1:sent, 2:received, 3:read, 4:blocked',
