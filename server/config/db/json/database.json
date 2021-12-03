@@ -6,5 +6,21 @@
     "USER": "root",
     "PASSWORD": "",
     "SSL": false
+  },
+  "DB_STAGE_CONSTANTS": {
+    "HOST": "localhost",
+    "PORT": 3307,
+    "DB": "agrideo_live",
+    "USER": "root",
+    "PASSWORD": "",
+    "SSL": false
+  },
+  "DB_PROD_CONSTANTS": {
+    "HOST": "localhost",
+    "PORT": 3308,
+    "DB": "agrideo_live",
+    "USER": "root",
+    "PASSWORD": "",
+    "SSL": false
   }
 }

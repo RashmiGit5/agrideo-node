@@ -4,7 +4,13 @@ import httpResponse from '../helpers/http-response';
 import { DATABASE } from '../config/db';
 import _ from 'lodash';
 
-let DB_CONSTANTS = DATABASE.DB_LOCAL_CONSTANTS;
+let DB_CONSTANTS = DATABASE.DB_LOCAL_CONSTANTS
+
+if (global.build === 'prod') {
+  DB_CONSTANTS = DATABASE.DB_PROD_CONSTANTS;
+} else if (global.build === 'stage') {
+  DB_CONSTANTS = DATABASE.DB_STAGE_CONSTANTS;
+}
 
 let connection = mysql.createPool({
   host: DB_CONSTANTS.HOST,

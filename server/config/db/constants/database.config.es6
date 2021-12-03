@@ -1,4 +1,4 @@
-import { DB_LOCAL_CONSTANTS } from '../json/database';
+import { DB_LOCAL_CONSTANTS, DB_STAGE_CONSTANTS, DB_PROD_CONSTANTS } from '../json/database';
 
 
 /**
@@ -7,6 +7,8 @@ import { DB_LOCAL_CONSTANTS } from '../json/database';
  */
 const DATABASE = {
   'DB_LOCAL_CONSTANTS': DB_LOCAL_CONSTANTS,
+  'DB_STAGE_CONSTANTS': DB_STAGE_CONSTANTS,
+  'DB_PROD_CONSTANTS': DB_PROD_CONSTANTS,
 };
 
 /**
