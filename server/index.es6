@@ -49,9 +49,12 @@ app.set('socketio', io);
 
 httpServer.listen(3000);
 
-// app.get('/', function (req, res) {
-//   res.sendFile('/Users/mini-1/Projects/Agrido/agrideo-node/index.html');
-// });
+app.get('/', function (req, res) {
+  // res.sendFile('/Users/mini-1/Projects/Agrido/agrideo-node/index.html');
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.write('<html><body><p>This is home Page.</p></body></html>');
+  res.end();
+});
 
 
 // 3rd party middleware

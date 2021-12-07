@@ -1,2 +1,2 @@
-global.build = 'dev';
+global.build = 'stage';
 require('./dist')
