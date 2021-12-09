@@ -7,9 +7,11 @@ import apiV1 from "./apis/v1";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
+require('dotenv').config()
+
 import { chatSendMsg, messageReceiveStstusUpdate, messageReadAllMessage, messageReceivedAllMessage } from "./modules/v1/chat/services/chat.service"
 
-const port = 5001;
+const port = process.env.API_PORT || 5000;
 
 const app = express();
 const httpServer = createServer(app);
@@ -47,7 +49,7 @@ io.on("connection", (socket) => {
 
 app.set('socketio', io);
 
-httpServer.listen(3000);
+httpServer.listen(process.env.SOCKET_PORT || 9005);
 
 app.get('/', function (req, res) {
   // res.sendFile('/Users/mini-1/Projects/Agrido/agrideo-node/index.html');
