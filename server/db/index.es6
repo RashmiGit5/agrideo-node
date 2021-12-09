@@ -3,21 +3,14 @@ import ErrorManager from '../helpers/error-manager';
 import httpResponse from '../helpers/http-response';
 import { DATABASE } from '../config/db';
 import _ from 'lodash';
-
-let DB_CONSTANTS = DATABASE.DB_LOCAL_CONSTANTS
-
-if (global.build === 'prod') {
-  DB_CONSTANTS = DATABASE.DB_PROD_CONSTANTS;
-} else if (global.build === 'stage') {
-  DB_CONSTANTS = DATABASE.DB_STAGE_CONSTANTS;
-}
+require('dotenv').config()
 
 let connection = mysql.createPool({
-  host: DB_CONSTANTS.HOST,
-  user: DB_CONSTANTS.USER,
-  password: DB_CONSTANTS.PASSWORD,
-  database: DB_CONSTANTS.DB,
-  connectionLimit: 500,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DB,
+  connectionLimit: process.env.DB_CONNECTION_LIMIT,
   supportBigNumbers: true,
   multipleStatements: true,
   timezone: 'utc',
