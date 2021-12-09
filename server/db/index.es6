@@ -1,7 +1,6 @@
 import mysql from 'mysql';
 import ErrorManager from '../helpers/error-manager';
 import httpResponse from '../helpers/http-response';
-import { DATABASE } from '../config/db';
 import _ from 'lodash';
 require('dotenv').config()
 

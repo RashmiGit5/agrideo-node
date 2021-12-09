@@ -1,11 +1,9 @@
-import CryptoJS from 'crypto-js';
-import { JWTCONFIG } from '../../config/auth';
 import jwt from "jsonwebtoken"
 import fs from "fs"
-import path from "path";
+require('dotenv').config()
 
 
-var privateKEY = fs.readFileSync(path.join(__dirname, 'private.pem'), 'utf8');
+var privateKEY = fs.readFileSync(process.env.PATH_JWT_PRIVATE_KEY, 'utf8');
 
 /*
     encryption token

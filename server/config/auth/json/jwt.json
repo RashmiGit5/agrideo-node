@@ -1,5 +1,5 @@
 {
   "JWT_CONSTANTS": {
-    "AES_SECRET_KEY": "sH4GfAuJf0vf0JugVvXR8p55ARxIcdkJ"
+    "AES_SECRET_KEY": ""
   }
 }

@@ -3,21 +3,23 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import path from "path";
 import apiV1 from "./apis/v1";
-
-import { createServer } from "http";
+import { createServer } from "https";
 import { Server } from "socket.io";
-
+import fs from "fs"
 require('dotenv').config()
+
+const key = fs.readFileSync(process.env.PATH_HTTPS_KEY);
+const cert = fs.readFileSync(process.env.PATH_HTTPS_CERT);
 
 import { chatSendMsg, messageReceiveStstusUpdate, messageReadAllMessage, messageReceivedAllMessage } from "./modules/v1/chat/services/chat.service"
 
 const port = process.env.API_PORT || 5000;
 
 const app = express();
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
+const httpsServer = createServer({ key, cert }, app);
+const io = new Server(httpsServer, {
   cors: {
-    origin: "http://localhost:3001",
+    origin: process.env.PATH_FE,
     methods: ["GET", "POST"],
   }
 });
@@ -49,7 +51,7 @@ io.on("connection", (socket) => {
 
 app.set('socketio', io);
 
-httpServer.listen(process.env.SOCKET_PORT || 9005);
+httpsServer.listen(process.env.SOCKET_PORT || 9005);
 
 app.get('/', function (req, res) {
   // res.sendFile('/Users/mini-1/Projects/Agrido/agrideo-node/index.html');
