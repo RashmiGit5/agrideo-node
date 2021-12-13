@@ -31,8 +31,8 @@ const chatCreate = (req, res) => {
           return;
         } else {
           httpResponse.sendSuccess(res, response);
-          if (!isChatExist || data.from_symphony) {
-            socketNewChatCreate(req.app.get('socketio'), { ...response, from_symphony: data.from_symphony, isChatExist: isChatExist })
+          if (!isChatExist || data.from_symfony) {
+            socketNewChatCreate(req.app.get('socketio'), { ...response, from_symfony: data.from_symfony, isChatExist: isChatExist })
           }
         }
       });
@@ -462,7 +462,13 @@ const chatMessageDelete = (req, res) => {
     }
 
     async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_DELETE" }, { chat_messages_id: sentMsg, msg_status: deleteMsgStatus }, callback),
+      (callback) => {
+        if (sentMsg.length > 0) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_DELETE" }, { chat_messages_id: sentMsg, msg_status: deleteMsgStatus }, callback)
+        } else {
+          callback(null, {})
+        }
+      },
       (res, callback) => {
         if (receivedMsg.length > 0) {
           commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_DELETE" }, { chat_messages_id: receivedMsg, msg_status: 2 }, callback)
@@ -471,6 +477,13 @@ const chatMessageDelete = (req, res) => {
         }
       },
       (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, data, callback),
+      (res, callback) => {
+        if (data.deleted_for_everyone) {
+          callback(null, { chatDetail: res })
+        } else {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_LAST_MSG_GET" }, data, (err, response) => callback(err, { chatDetail: res, last_message: response }))
+        }
+      }
     ],
       (err, response) => {
         // err if validation fail
@@ -478,7 +491,7 @@ const chatMessageDelete = (req, res) => {
           httpResponse.sendFailer(res, err.code, err);
           return;
         } else {
-          httpResponse.sendSuccess(res);
+          httpResponse.sendSuccess(res, response);
           if (data.deleted_for_everyone) {
             socketDeleteMsg(req.app.get('socketio'), response, data)
           }

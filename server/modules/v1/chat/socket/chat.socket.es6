@@ -38,8 +38,21 @@ const socketNewMsg = (io, data) => {
  */
 const socketDeleteMsg = (io, response, data) => {
   try {
-    io.sockets.in(`${response.user_id}`).emit("on_delete_message", data)
-    io.sockets.in(`${response.friend_id}`).emit("on_delete_message", data)
+    async.waterfall([
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_LAST_MSG_GET" }, { chat_id: data.chat_id, user_id: response.chatDetail.user_id }, callback)
+    ], (err, res) => {
+      if (!err) {
+        io.sockets.in(`${response.chatDetail.user_id}`).emit("on_delete_message", { ...data, last_message: res })
+      }
+    });
+
+    async.waterfall([
+      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_LAST_MSG_GET" }, { chat_id: data.chat_id, user_id: response.chatDetail.friend_id }, callback)
+    ], (err, res) => {
+      if (!err) {
+        io.sockets.in(`${response.chatDetail.friend_id}`).emit("on_delete_message", { ...data, last_message: res })
+      }
+    });
   } catch (err) {
 
   }
@@ -54,7 +67,7 @@ const socketDeleteMsg = (io, response, data) => {
 const socketNewChatCreate = (io, data) => {
   try {
 
-    if (data.isChatExist && data.from_symphony) {
+    if (data.isChatExist && data.from_symfony) {
       io.sockets.in(`${data.chat.user_id}`).emit("on_contact_request_accept", { chat_id: data.chat.id })
       io.sockets.in(`${data.chat.friend_id}`).emit("on_contact_request_accept", { chat_id: data.chat.id })
     }

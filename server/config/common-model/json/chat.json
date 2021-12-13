@@ -97,6 +97,10 @@
           "KEY": "user_id"
         },
         {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
           "TYPE": "sort",
           "KEY": "sort_by"
         },
@@ -113,7 +117,7 @@
           "KEY": "page_offset"
         }
       ],
-      "SQL": "select chat.*, contacts.id as contacts_id from chat left join contacts on contacts.user_id = chat.user_id and contacts.friend_id = chat.friend_id where chat.user_id = ? OR chat.friend_id = ? ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
+      "SQL": "select chat.*, contacts.id as contacts_id, chat_status.is_unread as chat_read_status from chat inner join chat_status on chat_status.chat_id = chat.id and chat_status.user_id = ? left join contacts on contacts.user_id = chat.user_id and contacts.friend_id = chat.friend_id where chat.user_id = ? OR chat.friend_id = ? ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
     },
     "CHAT_PAGGING_COUNT_GET": {
       "PARAMS": [
@@ -456,7 +460,7 @@
           "KEY": "user_id"
         }
       ],
-      "SQL": "SELECT chat_message.id FROM chat INNER JOIN chat_message ON chat.id = chat_message.chat_id and sender_id != ? and msg_status in (?) where chat.user_id = ? OR chat.friend_id = ?"
+      "SQL": "SELECT chat.id FROM chat INNER JOIN chat_message ON chat.id = chat_message.chat_id and sender_id != ? and msg_status in (?) where chat.user_id = ? OR chat.friend_id = ? group by chat.id"
     },
     "CHAT_RECEIVE_ALL_MESSAGE": {
       "PARAMS": [

@@ -54,7 +54,7 @@ app.set('socketio', io);
 httpsServer.listen(process.env.SOCKET_PORT || 9005);
 
 app.get('/', function (req, res) {
-  // res.sendFile('/Users/mini-1/Projects/Agrido/agrideo-node/index.html');
+  // res.sendFile('/Users/mini-1/Projects/Agrido/index.html');
   res.writeHead(200, { 'Content-Type': 'text/html' });
   res.write('<html><body><p>This is home Page.</p></body></html>');
   res.end();
