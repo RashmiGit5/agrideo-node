@@ -409,9 +409,17 @@ const chatMessageGet = (req, res) => {
   try {
     let setting = getDataTableSetting(_.assign(req.body, req.query), DATATABLE.CHAT_MESSAGE_DATATABLE_CONSTANTS);
     let data = _.assign(req.body, req.query, req.params, req.jwt, setting);
-    async.series([
+    async.waterfall([
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_COUNT_GET" }, data, callback),
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_GET" }, data, callback),
+      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_GET" }, data, (err, response) => callback(err, { count: res.count, chat: response })),
+      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL_WITH_USER" }, data, (err, response) => callback(err, { ...res, contacts_id: response.contacts_id })),
+      (res, callback) => {
+        if (!res.contacts_id) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_TODAY_COUNT_GET" }, data, (err, response) => callback(err, { ...res, total_message_count: response.total_message_count }))
+        } else {
+          callback(null, { ...res, total_message_count: null })
+        }
+      },
     ],
       (err, response) => {
         // err if validation fail
@@ -419,11 +427,7 @@ const chatMessageGet = (req, res) => {
           httpResponse.sendFailer(res, err.code, err);
           return;
         } else {
-          let result = {
-            count: (response[0] || {}).count,
-            chat: response[1]
-          }
-          httpResponse.sendSuccess(res, result);
+          httpResponse.sendSuccess(res, response);
         }
       });
   } catch (err) {

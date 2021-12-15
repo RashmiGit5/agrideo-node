@@ -475,13 +475,31 @@
       "PARAMS": [
         {
           "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
           "KEY": "chat_id"
         }
       ],
-      "SQL": "select chat.*, contacts.id as contacts_id from chat left join contacts on contacts.user_id = chat.user_id and contacts.friend_id = chat.friend_id where chat.id = ? ",
+      "SQL": "select chat.*, contacts.id as contacts_id, chat_status.is_unread as chat_read_status from chat inner join chat_status on chat_status.chat_id = chat.id and chat_status.user_id != ? left join contacts on contacts.user_id = chat.user_id and contacts.friend_id = chat.friend_id where chat.id = ? ",
       "RESULT": "SINGLE",
       "VALIDATION": "NOT_EXISTS",
       "ERROR_CODE": "DATA_NOT_FOUND"
+    },
+    "CHAT_MESSAGE_TODAY_COUNT_GET": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "SELECT count(*) as total_message_count FROM chat_message WHERE chat_id = ? AND sender_id = ? and cast(created_at as Date) = cast(now() as Date);",
+      "RESULT": "SINGLE"
     }
   }
 }
