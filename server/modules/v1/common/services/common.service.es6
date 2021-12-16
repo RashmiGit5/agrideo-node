@@ -45,7 +45,7 @@ const uploadCommonFile = (req, res) => {
 const deleteCommonFile = (req, res) => {
   try {
     async.waterfall([
-      (callback) => removeFile(req.params.file_name, callback)
+      (callback) => removeFile(req.body.file_name, callback)
     ],
       (err, data) => {
         if (err) {

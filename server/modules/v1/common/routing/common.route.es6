@@ -11,7 +11,7 @@ const commonroute = app => {
 
   app.post("/file/upload", checkUserToken, uploadTempFileMulter.single('file'), uploadCommonFile);
 
-  app.delete("/file/:file_name", checkUserToken, deleteCommonFile);
+  app.post("/file/delete", checkUserToken, deleteCommonFile);
 
   return app;
 };

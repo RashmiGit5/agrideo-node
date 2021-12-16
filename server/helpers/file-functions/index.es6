@@ -8,14 +8,15 @@ import multer from 'multer';
 import multerS3 from 'multer-s3';
 const S3 = require('aws-sdk/clients/s3');
 const AWS = require('aws-sdk');
-const wasabiEndpoint = new AWS.Endpoint('s3.ap-northeast-1.wasabisys.com');
+require('dotenv').config()
 
-const accessKeyId = 'DR8JVB7CEDG64X7JNQKP';
-const secretAccessKey = 'EcTmtzevdyFyvil4pF1p4qTtctIp5BYGhmWF6pUQ';
+const wasabiEndpoint = new AWS.Endpoint(process.env.WASABI_END_POINT);
+const accessKeyId = process.env.WASABI_ACCESSKEY;
+const secretAccessKey = process.env.WASABI_SECRETKEY;
 
 const s3 = new S3({
   endpoint: wasabiEndpoint,
-  region: 'ap-northeast-1',
+  region: process.env.WASABI_REGION,
   accessKeyId,
   secretAccessKey,
   ACL: 'public-read',
@@ -24,7 +25,7 @@ const s3 = new S3({
 AWS.config.update({
   secretAccessKey,
   accessKeyId,
-  region: 'ap-northeast-1'
+  region: process.env.WASABI_REGION
 });
 
 const FILE_CONFIG = {
@@ -337,9 +338,9 @@ const tempFileStorage = multer.diskStorage({
 const uploadTempFileMulter = multer({
   storage: multerS3({
     s3: s3,
-    bucket: 'agrideo-chat-document',
+    bucket: process.env.WASABI_BUCKET_NAME,
     key: function (req, file, cb) {
-      cb(null, uuid() + '.' + file.originalname.split('.').pop());
+      cb(null, uuid() + '/' + file.originalname);
     }
   })
 });
