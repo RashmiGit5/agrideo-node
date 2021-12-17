@@ -19,7 +19,7 @@ const checkUserToken = (req, res, next) => {
     token = token ? token.replace('Bearer', '').trim() : '';
     if (!!token) {
         const decoded = decrypt(token)
-        if (!!decoded.user_id) {
+        if (!!decoded?.user_id) {
             req.jwt = decoded
             next()
         } else {
