@@ -81,7 +81,7 @@
           "KEY": "user_chat_id"
         }
       ],
-      "SQL": "select fos_user.*, chat_user_status.user_status as chat_user_status, cs.is_blocked as chat_block_status from fos_user left join chat_status cs on cs.chat_id = ? and user_id = fos_user.id inner join chat_user_status on chat_user_status.user_id = fos_user.id where fos_user.id = ?",
+      "SQL": "select fos_user.*, chat_user_status.user_status as chat_user_status, cs.is_blocked as chat_block_status from fos_user left join chat_status cs on cs.chat_id = ? and user_id = fos_user.id left join chat_user_status on chat_user_status.user_id = fos_user.id where fos_user.id = ?",
       "RESULT": "SINGLE",
       "VALIDATION": "NOT_EXISTS",
       "ERROR_CODE": "DATA_NOT_FOUND"
@@ -117,7 +117,7 @@
           "KEY": "page_offset"
         }
       ],
-      "SQL": "select chat.*, contacts.id as contacts_id, chat_status.is_unread as chat_read_status from chat inner join chat_status on chat_status.chat_id = chat.id and chat_status.user_id = ? left join contacts on contacts.user_id = chat.user_id and contacts.friend_id = chat.friend_id where chat.user_id = ? OR chat.friend_id = ? ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
+      "SQL": "select chat.*, contacts.id as contacts_id, chat_status.is_unread as chat_read_status from chat left join chat_status on chat_status.chat_id = chat.id and chat_status.user_id = ? left join contacts on contacts.user_id = chat.user_id and contacts.friend_id = chat.friend_id where chat.user_id = ? OR chat.friend_id = ? ORDER BY #sort_by# #sort_order# LIMIT ? OFFSET ?"
     },
     "CHAT_PAGGING_COUNT_GET": {
       "PARAMS": [
@@ -401,6 +401,20 @@
         }
       ],
       "SQL": "insert into chat_status (chat_id, user_id) values (?, ?)"
+    },
+    "CHAT_STATUS_GET": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "select * from chat_status where chat_id = ? AND user_id = ?",
+      "RESULT": "SINGLE"
     },
     "CHAT_USER_STATUS_DETAIL": {
       "PARAMS": [

@@ -62,48 +62,48 @@ const createChatSP = (data, callback) => {
       }
     },
     (res, callback) => {
-      if (res.insertId) {
-        commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_GET" }, { user_id: data.user_id }, (err, response) => {
-          if (err) {
-            callback(err, null)
-          } else if (!response) {
-            commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_CREATE" }, { user_id: data.user_id, user_status: 1 }, (err, response) => callback(err, res))
-          } else {
-            callback(null, res)
-          }
-        })
-      } else {
-        callback(null, res)
-      }
+      commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_GET" }, { user_id: data.user_id }, (err, response) => {
+        if (err) {
+          callback(err, null)
+        } else if (!response) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_CREATE" }, { user_id: data.user_id, user_status: 1 }, (err, response) => callback(err, res))
+        } else {
+          callback(null, res)
+        }
+      })
     },
     (res, callback) => {
-      if (res.insertId) {
-        commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_GET" }, { user_id: data.friend_id }, (err, response) => {
-          if (err) {
-            callback(err, null)
-          } else if (!response) {
-            commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_CREATE" }, { user_id: data.friend_id, user_status: 1 }, (err, response) => callback(err, res))
-          } else {
-            callback(null, res)
-          }
-        })
-      } else {
-        callback(null, res)
-      }
+      commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_GET" }, { user_id: data.friend_id }, (err, response) => {
+        if (err) {
+          callback(err, null)
+        } else if (!response) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_CREATE" }, { user_id: data.friend_id, user_status: 1 }, (err, response) => callback(err, res))
+        } else {
+          callback(null, res)
+        }
+      })
     },
     (res, callback) => {
-      if (!isChatExist) {
-        commonModel({ module_name: "CHAT", method_name: "CHAT_STATUS_CREATE" }, { chat_id: res.insertId || res.id, user_id: data.user_id }, (err, response) => callback(null, res))
-      } else {
-        callback(null, res)
-      }
+      commonModel({ module_name: "CHAT", method_name: "CHAT_STATUS_GET" }, { chat_id: res.insertId || res.id, user_id: data.user_id }, (err, response) => {
+        if (err) {
+          callback(err, null)
+        } else if (!response) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_STATUS_CREATE" }, { chat_id: res.insertId || res.id, user_id: data.user_id }, (err, response) => callback(null, res))
+        } else {
+          callback(null, res)
+        }
+      })
     },
     (res, callback) => {
-      if (!isChatExist) {
-        commonModel({ module_name: "CHAT", method_name: "CHAT_STATUS_CREATE" }, { chat_id: res.insertId || res.id, user_id: data.friend_id }, (err, response) => callback(null, res))
-      } else {
-        callback(null, res)
-      }
+      commonModel({ module_name: "CHAT", method_name: "CHAT_STATUS_GET" }, { chat_id: res.insertId || res.id, user_id: data.friend_id }, (err, response) => {
+        if (err) {
+          callback(err, null)
+        } else if (!response) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_STATUS_CREATE" }, { chat_id: res.insertId || res.id, user_id: data.friend_id }, (err, response) => callback(null, res))
+        } else {
+          callback(null, res)
+        }
+      })
     },
     (res, callback) => {
       commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, { chat_id: res.insertId || res.id }, callback)
