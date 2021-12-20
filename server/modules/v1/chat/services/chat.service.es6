@@ -450,7 +450,7 @@ const chatMessageDelete = (req, res) => {
       return
     }
 
-    let sentMsg = [], receivedMsg = [], deleteMsgStatus = 1
+    let sentMsg = [], sentDeletedMsg = [], receivedMsg = [], receivedDeletedMsg = [], deleteMsgStatus = 1
 
     if (data.deleted_for_everyone) {
       deleteMsgStatus = 3
@@ -458,9 +458,17 @@ const chatMessageDelete = (req, res) => {
     } else {
       data.messages_id.forEach(element => {
         if (element.sender_id === data.user_id) {
-          sentMsg.push(element.id)
+          if (element?.msg_status === 0) {
+            sentMsg.push(element.id)
+          } else {
+            sentDeletedMsg.push(element.id)
+          }
         } else {
-          receivedMsg.push(element.id)
+          if (element?.msg_status === 0) {
+            receivedMsg.push(element.id)
+          } else {
+            receivedDeletedMsg.push(element.id)
+          }
         }
       });
     }
@@ -471,6 +479,20 @@ const chatMessageDelete = (req, res) => {
           commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_DELETE" }, { chat_messages_id: sentMsg, msg_status: deleteMsgStatus }, callback)
         } else {
           callback(null, {})
+        }
+      },
+      (res, callback) => {
+        if (sentDeletedMsg.length > 0) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_DELETE" }, { chat_messages_id: sentDeletedMsg, msg_status: 3 }, callback)
+        } else {
+          callback(null, res)
+        }
+      },
+      (res, callback) => {
+        if (receivedDeletedMsg.length > 0) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_DELETE" }, { chat_messages_id: receivedDeletedMsg, msg_status: 3 }, callback)
+        } else {
+          callback(null, res)
         }
       },
       (res, callback) => {
