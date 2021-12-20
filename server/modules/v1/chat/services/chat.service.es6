@@ -410,8 +410,22 @@ const chatMessageGet = (req, res) => {
     let setting = getDataTableSetting(_.assign(req.body, req.query), DATATABLE.CHAT_MESSAGE_DATATABLE_CONSTANTS);
     let data = _.assign(req.body, req.query, req.params, req.jwt, setting);
     async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_COUNT_GET" }, data, callback),
-      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_GET" }, data, (err, response) => callback(err, { count: res.count, chat: response })),
+      (callback) => {
+        if (!!data.message_id) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_OFFSET_COUNT_GET" }, data, (err, res) => {
+            if (!!res && res.count) {
+              req.body.page_index = Math.ceil(res.count / data.page_size)
+              setting = getDataTableSetting(_.assign(req.body, req.query), DATATABLE.CHAT_MESSAGE_DATATABLE_CONSTANTS);
+              data = _.assign(req.body, req.query, req.params, req.jwt, setting);
+            }
+            callback(err, res)
+          })
+        } else {
+          callback(null, {})
+        }
+      },
+      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_COUNT_GET" }, data, callback),
+      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_GET" }, data, (err, response) => callback(err, { page_index: req.body.page_index, count: res.count, chat: response })),
       (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL_WITH_USER" }, data, (err, response) => callback(err, { ...res, contacts_id: response.contacts_id })),
       (res, callback) => {
         if (!res.contacts_id) {

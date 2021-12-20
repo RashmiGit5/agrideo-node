@@ -234,6 +234,32 @@
       "SQL": "select count(*) as count from chat_message where chat_id = ? and (msg_status != 4 OR (msg_status = 4 AND sender_id = ?)) and (delete_status = 0 OR (delete_status = 1 AND sender_id != ?) OR (delete_status = 2 AND sender_id = ?))",
       "RESULT": "SINGLE"
     },
+    "CHAT_MESSAGE_OFFSET_COUNT_GET": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "message_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "select count(*) as count from chat_message where id >= ? AND chat_id = ? and (msg_status != 4 OR (msg_status = 4 AND sender_id = ?)) and (delete_status = 0 OR (delete_status = 1 AND sender_id != ?) OR (delete_status = 2 AND sender_id = ?))",
+      "RESULT": "SINGLE"
+    },
     "CHAT_MESSAGE_DELETE": {
       "PARAMS": [
         {
