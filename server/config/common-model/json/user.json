@@ -84,7 +84,7 @@
           "KEY": "user_id"
         }
       ],
-      "SQL": "select fos_user.*, chat_user_status.user_status as chat_user_status from fos_user inner join chat_user_status on chat_user_status.user_id = fos_user.id where fos_user.id = ?",
+      "SQL": "select fos_user.*, chat_user_status.user_status as chat_user_status from fos_user left join chat_user_status on chat_user_status.user_id = fos_user.id where fos_user.id = ?",
       "RESULT": "SINGLE",
       "VALIDATION": "NOT_EXISTS",
       "ERROR_CODE": "DATA_NOT_FOUND"
