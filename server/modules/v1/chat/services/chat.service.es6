@@ -325,7 +325,7 @@ const chatListSearchMessage = (req, res) => {
 const chatListSearchContact = (req, res) => {
   try {
     let data = _.assign(req.body, req.query, req.params, req.jwt);
-    data.search_key = `%${data.search_key}%`
+    data.search_key = `%${(data.search_key).split(" ").join("")}%`
     async.waterfall([
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_LIST_CONTACT_SEARCH" }, data, callback),
       (response, callback) => {
