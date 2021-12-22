@@ -7,6 +7,8 @@ import { DATATABLE } from '../../../../config/datatable';
 import { GENERAL } from '../../../../config/general';
 import { socketDeleteMsg, socketNewChatCreate, socketNewMsg, socketMessageStatusUpdate } from '../socket/chat.socket';
 
+var chatMsgRequestQueue = []
+
 /**
  * @type function
  * @description Create Chat and user status
@@ -369,6 +371,36 @@ const chatListSearchContact = (req, res) => {
  * @param (object) res : socket event data
  */
 const chatSendMsg = (io, data) => {
+  if (chatMsgRequestQueue.length === 0) {
+    chatMsgRequestQueue.push({ io, data })
+    msgQueueExecution()
+  } else {
+    chatMsgRequestQueue.push({ io, data })
+  }
+}
+
+/**
+ * @type function
+ * @description check request in array and call api funciton
+ * @param (bool) fromApi : is it from api function
+ */
+const msgQueueExecution = (fromApi = false) => {
+  if (fromApi) {
+    chatMsgRequestQueue.splice(0, 1);
+  }
+
+  if (chatMsgRequestQueue.length > 0) {
+    addMsgInDBAndSocekt(chatMsgRequestQueue[0].io, chatMsgRequestQueue[0].data)
+  }
+}
+
+/**
+ * @type function
+ * @description send chat message
+ * @param (object) io : socket io ref
+ * @param (object) res : socket event data
+ */
+const addMsgInDBAndSocekt = (io, data) => {
   try {
     let isSenderBlocked = false
     async.waterfall([
@@ -387,6 +419,7 @@ const chatSendMsg = (io, data) => {
       (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MSG_FROM_ID" }, { id: res.messageDetail.insertId }, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp })),
       (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_UPDATE_LAST_MESSAGE" }, data, (err, resp) => callback(err, res)),
     ], (err, response) => {
+      msgQueueExecution(true)
       if (err) {
       } else {
         response.messageDetail.temp_id = data.temp_id
@@ -395,6 +428,7 @@ const chatSendMsg = (io, data) => {
       }
     });
   } catch (err) {
+    msgQueueExecution(true)
   }
 }
 

@@ -18,6 +18,8 @@ const port = process.env.API_PORT || 5000;
 const app = express();
 const httpsServer = createServer({ key, cert }, app);
 const io = new Server(httpsServer, {
+  pingInterval: 25000,
+  pingTimeout: 60000,
   cors: {
     origin: process.env.PATH_FE,
     methods: ["GET", "POST"],
