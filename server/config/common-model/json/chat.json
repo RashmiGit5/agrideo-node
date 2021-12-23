@@ -309,6 +309,10 @@
           "KEY": "user_id"
         },
         {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
           "TYPE": "string",
           "KEY": "search_key"
         },
@@ -321,7 +325,7 @@
           "KEY": "user_id"
         }
       ],
-      "SQL": "SELECT chat.*, fu.first_name, fu.last_name, fu.username, fu.cover_image, fu.profile_url, fu.id as master_user_friend_id from chat INNER JOIN fos_user fu ON (fu.id = chat.user_id OR fu.id = chat.friend_id) AND fu.id != ? WHERE (concat(fu.first_name,fu.last_name) LIKE ?) AND (chat.user_id = ? OR chat.friend_id = ?) ORDER BY chat.created_at desc;"
+      "SQL": "SELECT chat.*, fu.first_name, fu.last_name, fu.username, fu.cover_image, fu.profile_url, fu.id as master_user_friend_id from chat INNER JOIN contacts cnt on cnt.user_id = ? and (cnt.friend_id = chat.user_id OR cnt.friend_id = chat.friend_id) INNER JOIN fos_user fu ON (fu.id = chat.user_id OR fu.id = chat.friend_id) AND fu.id != ? WHERE (concat(fu.first_name,fu.last_name) LIKE ?) AND (chat.user_id = ? OR chat.friend_id = ?) ORDER BY chat.created_at desc;"
     },
     "CHAT_LAST_MSG_GET": {
       "PARAMS": [
