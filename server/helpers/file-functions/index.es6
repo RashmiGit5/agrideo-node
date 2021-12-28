@@ -340,7 +340,7 @@ const uploadTempFileMulter = multer({
     s3: s3,
     bucket: process.env.WASABI_BUCKET_NAME,
     key: function (req, file, cb) {
-      cb(null, uuid() + '/' + file.originalname);
+      cb(null, 'chat' + '/' + uuid() + '/' + file.originalname);
     }
   })
 });

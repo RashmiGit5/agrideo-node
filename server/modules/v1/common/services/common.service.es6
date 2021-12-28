@@ -49,7 +49,7 @@ const deleteCommonFile = (req, res) => {
     ],
       (err, data) => {
         if (err) {
-          httpResponse.sendFailer(res, err.code, err);
+          httpResponse.sendFailer(res, 403);
         } else {
           httpResponse.sendSuccess(res);
         }
