@@ -62,13 +62,6 @@ app.get('/', function (req, res) {
   res.end();
 });
 
-// app.get('/friend', function (req, res) {
-//   res.sendFile('/Users/mini-1/Projects/Agrido/index copy.html');
-//   res.writeHead(200, { 'Content-Type': 'text/html' });
-//   res.write('<html><body><p>This is home Page.</p></body></html>');
-//   res.end();
-// });
-
 // 3rd party middleware
 app.use(
   cors({

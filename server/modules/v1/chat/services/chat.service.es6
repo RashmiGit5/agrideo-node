@@ -422,9 +422,11 @@ const addMsgInDBAndSocekt = (io, data) => {
       msgQueueExecution(true)
       if (err) {
       } else {
-        response.messageDetail.temp_id = data.temp_id
-        response.isSenderBlocked = isSenderBlocked
-        socketNewMsg(io, response)
+        if (response && response.messageDetail) {
+          response.messageDetail.temp_id = data.temp_id
+          response.isSenderBlocked = isSenderBlocked
+          socketNewMsg(io, response)
+        }
       }
     });
   } catch (err) {
