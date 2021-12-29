@@ -15,14 +15,14 @@ import { GENERAL } from '../../../../config/general';
 const socketNewMsg = (io, data) => {
   try {
     if (data.isSenderBlocked) {
-      io.sockets.in(`${data.messageDetail.sender_id}`).emit("on_new_message", data.messageDetail)
+      io.to(`${data.messageDetail.sender_id}`).emit("on_new_message", data.messageDetail)
     } else {
       if (data.chatDetail.user_id === data.messageDetail.sender_id || !data.chatDetail.chatStatus.is_blocked) {
-        io.sockets.in(`${data.chatDetail.user_id}`).emit("on_new_message", data.messageDetail)
+        io.to(`${data.chatDetail.user_id}`).emit("on_new_message", data.messageDetail)
       }
 
       if (data.chatDetail.friend_id === data.messageDetail.sender_id || !data.chatDetail.chatStatus.is_blocked) {
-        io.sockets.in(`${data.chatDetail.friend_id}`).emit("on_new_message", data.messageDetail)
+        io.to(`${data.chatDetail.friend_id}`).emit("on_new_message", data.messageDetail)
       }
     }
   } catch (err) {
@@ -42,7 +42,7 @@ const socketDeleteMsg = (io, response, data) => {
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_LAST_MSG_GET" }, { chat_id: data.chat_id, user_id: response.chatDetail.user_id }, callback)
     ], (err, res) => {
       if (!err) {
-        io.sockets.in(`${response.chatDetail.user_id}`).emit("on_delete_message", { ...data, last_message: res })
+        io.to(`${response.chatDetail.user_id}`).emit("on_delete_message", { ...data, last_message: res })
       }
     });
 
@@ -50,7 +50,7 @@ const socketDeleteMsg = (io, response, data) => {
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_LAST_MSG_GET" }, { chat_id: data.chat_id, user_id: response.chatDetail.friend_id }, callback)
     ], (err, res) => {
       if (!err) {
-        io.sockets.in(`${response.chatDetail.friend_id}`).emit("on_delete_message", { ...data, last_message: res })
+        io.to(`${response.chatDetail.friend_id}`).emit("on_delete_message", { ...data, last_message: res })
       }
     });
   } catch (err) {
@@ -68,8 +68,8 @@ const socketNewChatCreate = (io, data) => {
   try {
 
     if (data.isChatExist && data.from_symfony) {
-      io.sockets.in(`${data.chat.user_id}`).emit("on_contact_request_accept", { chat_id: data.chat.id })
-      io.sockets.in(`${data.chat.friend_id}`).emit("on_contact_request_accept", { chat_id: data.chat.id })
+      io.to(`${data.chat.user_id}`).emit("on_contact_request_accept", { chat_id: data.chat.id })
+      io.to(`${data.chat.friend_id}`).emit("on_contact_request_accept", { chat_id: data.chat.id })
     }
 
     if (!data.isChatExist) {
@@ -77,8 +77,8 @@ const socketNewChatCreate = (io, data) => {
         (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { chat_id: data.chat.id, user_chat_id: data.chat.user_id }, callback),
       ],
         (err, response) => {
-          io.sockets.in(`${data.chat.user_id}`).emit("on_new_chat_create", data)
-          io.sockets.in(`${data.chat.friend_id}`).emit("on_new_chat_create", { chat: data.chat, user: response })
+          io.to(`${data.chat.user_id}`).emit("on_new_chat_create", data)
+          io.to(`${data.chat.friend_id}`).emit("on_new_chat_create", { chat: data.chat, user: response })
         });
     }
   } catch (err) {
