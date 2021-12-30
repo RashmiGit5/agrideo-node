@@ -419,6 +419,11 @@ const addMsgInDBAndSocekt = (io, data) => {
         commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp }))
       },
       (res, callback) => {
+        setTimeout(() => {
+          callback(null, res)
+        }, 1000);
+      },
+      (res, callback) => {
         console.log("\n\n\nCHAT_SEND_MESSAGE ---> " + JSON.stringify(res));
         commonModel({ module_name: "CHAT", method_name: "CHAT_MSG_FROM_ID" }, { id: res.messageDetail.insertId }, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp }))
       },
