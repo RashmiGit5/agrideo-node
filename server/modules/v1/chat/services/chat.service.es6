@@ -403,22 +403,34 @@ const msgQueueExecution = (fromApi = false) => {
 const addMsgInDBAndSocekt = (io, data) => {
   try {
     let isSenderBlocked = false
+    console.log("\n\n\ndata ----> " + JSON.stringify(data));
     async.waterfall([
       (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_SENDER_STATUS_DETAIL" }, { ...data, user_id: data.sender_id }, callback),
       (res, callback) => {
+        console.log("\nCHAT_DETAIL ----> " + JSON.stringify(res));
         isSenderBlocked = !!res.is_blocked
         commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, data, callback)
       },
       (res, callback) => {
+        console.log("\nCHAT_USER_STATUS_DETAIL ----> " + JSON.stringify(res));
         commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_DETAIL" }, { ...data, user_id: data.sender_id }, (err, resp) => callback(err, { chatDetail: { ...res, chatStatus: resp } }))
       },
       (res, callback) => {
+        console.log("\nCHAT_SEND_MESSAGE ----> " + JSON.stringify(res));
         data.msg_status = isSenderBlocked || !!res.chatDetail.chatStatus.is_blocked ? 4 : 1
         commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp }))
       },
-      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MSG_FROM_ID" }, { id: res.messageDetail.insertId }, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp })),
-      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_UPDATE_LAST_MESSAGE" }, data, (err, resp) => callback(err, res)),
+      (res, callback) => {
+        console.log("\nCHAT_MSG_FROM_ID ----> " + JSON.stringify(res));
+        commonModel({ module_name: "CHAT", method_name: "CHAT_MSG_FROM_ID" }, { id: res.messageDetail.insertId }, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp }))
+      },
+      (res, callback) => {
+        console.log("\nCHAT_UPDATE_LAST_MESSAGE ----> " + JSON.stringify(res));
+        commonModel({ module_name: "CHAT", method_name: "CHAT_UPDATE_LAST_MESSAGE" }, data, (err, resp) => callback(err, res))
+      },
     ], (err, response) => {
+      console.log("\nresponse ----> " + JSON.stringify(response));
+      console.log("\nerr ----> " + JSON.stringify(err));
       msgQueueExecution(true)
       if (err) {
       } else {
