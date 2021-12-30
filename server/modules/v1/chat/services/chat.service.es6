@@ -419,22 +419,15 @@ const addMsgInDBAndSocekt = (io, data) => {
         commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp }))
       },
       (res, callback) => {
-        setTimeout(() => {
-          callback(null, res)
-        }, 1000);
+        setTimeout(() => callback(null, res), 100);
       },
       (res, callback) => {
-        console.log("\n\n\nCHAT_SEND_MESSAGE ---> " + JSON.stringify(res));
         commonModel({ module_name: "CHAT", method_name: "CHAT_MSG_FROM_ID" }, { id: res.messageDetail.insertId }, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp }))
       },
       (res, callback) => {
-        console.log("\nCHAT_MSG_FROM_ID ---> " + JSON.stringify(res));
         commonModel({ module_name: "CHAT", method_name: "CHAT_UPDATE_LAST_MESSAGE" }, data, (err, resp) => callback(err, res))
       },
     ], (err, response) => {
-      console.log("\nerr ---> " + JSON.stringify(err));
-      console.log("\nchatDetail ---> " + JSON.stringify(response.chatDetail));
-      console.log("\nmessageDetail ---> " + JSON.stringify(response.messageDetail));
       msgQueueExecution(true)
       if (err) {
       } else {

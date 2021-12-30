@@ -14,7 +14,6 @@ import { GENERAL } from '../../../../config/general';
  */
 const socketNewMsg = (io, data) => {
   try {
-    console.log("\ndata ---> " + JSON.stringify(data));
     if (data.isSenderBlocked) {
       io.to(`${data.messageDetail.sender_id}`).emit("on_new_message", data.messageDetail)
     } else {
