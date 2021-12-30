@@ -215,7 +215,7 @@ const moveFile = (file_name, path, temp_path, previewpath, maincallback) => {
 const removeFile = (file_name, maincallback) => {
   if (file_name) {
     s3.deleteObject({
-      Bucket: 'agrideo-chat-document',
+      Bucket: process.env.WASABI_BUCKET_NAME,
       Key: file_name
     }, (err, data) => {
       maincallback(err, data);

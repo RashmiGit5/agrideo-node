@@ -6,6 +6,8 @@ import { getDataTableSetting, } from '../../../../helpers/common-functions';
 import { DATATABLE } from '../../../../config/datatable';
 import { GENERAL } from '../../../../config/general';
 import { socketDeleteMsg, socketNewChatCreate, socketNewMsg, socketMessageStatusUpdate } from '../socket/chat.socket';
+import { removeFile } from '../../../../helpers/file-functions/index.es6';
+require('dotenv').config()
 
 var chatMsgRequestQueue = []
 
@@ -512,11 +514,16 @@ const chatMessageDelete = (req, res) => {
       return
     }
 
-    let sentMsg = [], sentDeletedMsg = [], receivedMsg = [], receivedDeletedMsg = [], deleteMsgStatus = 1
+    let sentMsg = [], sentDeletedMsg = [], receivedMsg = [], receivedDeletedMsg = [], deleteMsgStatus = 1, attachementForDelete = []
 
     if (data.deleted_for_everyone) {
       deleteMsgStatus = 3
-      sentMsg = data.messages_id.map(ele => ele.id)
+      data.messages_id.forEach(ele => {
+        sentMsg.push(ele.id)
+        if (!!ele.attachment_url) {
+          attachementForDelete.push(ele.attachment_url)
+        }
+      })
     } else {
       data.messages_id.forEach(element => {
         if (element.sender_id === data.user_id) {
@@ -524,12 +531,18 @@ const chatMessageDelete = (req, res) => {
             sentMsg.push(element.id)
           } else {
             sentDeletedMsg.push(element.id)
+            if (!!element.attachment_url) {
+              attachementForDelete.push(element.attachment_url)
+            }
           }
         } else {
           if (element?.msg_status === 0) {
             receivedMsg.push(element.id)
           } else {
             receivedDeletedMsg.push(element.id)
+            if (!!element.attachment_url) {
+              attachementForDelete.push(element.attachment_url)
+            }
           }
         }
       });
@@ -537,6 +550,28 @@ const chatMessageDelete = (req, res) => {
 
     async.waterfall([
       (callback) => {
+        if (attachementForDelete.length > 0) {
+          let count = 0
+          async.whilst(
+            () => { return count < attachementForDelete.length },
+            (callbac) => {
+              if (!!attachementForDelete[count]) {
+                let filePath = attachementForDelete[count].split(`${process.env.WASABI_BUCKET_NAME}/`).pop()
+                removeFile(decodeURI(filePath), () => {
+                  ++count
+                  callbac(null, {})
+                })
+              } else {
+                callbac(null, {})
+              }
+            },
+            callback(null, {})
+          )
+        } else {
+          callback(null, {})
+        }
+      },
+      (res, callback) => {
         if (sentMsg.length > 0) {
           commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_DELETE" }, { chat_messages_id: sentMsg, msg_status: deleteMsgStatus }, callback)
         } else {
@@ -748,45 +783,8 @@ const chatDetailWithUser = (req, res) => {
   }
 }
 
-const chatSendMessageApi = (req, res) => {
-  try {
-    let data = _.assign(req.body, req.query, req.params, req.jwt);
-    let isSenderBlocked = false
-    async.waterfall([
-      (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_SENDER_STATUS_DETAIL" }, { ...data, user_id: data.sender_id }, callback),
-      (res, callback) => {
-        isSenderBlocked = !!res.is_blocked
-        commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, data, callback)
-      },
-      (res, callback) => {
-        commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_DETAIL" }, { ...data, user_id: data.sender_id }, (err, resp) => callback(err, { chatDetail: { ...res, chatStatus: resp } }))
-      },
-      (res, callback) => {
-        data.msg_status = isSenderBlocked || !!res.chatDetail.chatStatus.is_blocked ? 4 : 1
-        commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp }))
-      },
-      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MSG_FROM_ID" }, { id: res.messageDetail.insertId }, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp })),
-      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_UPDATE_LAST_MESSAGE" }, data, (err, resp) => callback(err, res)),
-    ],
-      (err, response) => {
-        // err if validation fail
-        if (err) {
-          httpResponse.sendFailer(res, err.code, err);
-          return;
-        } else {
-          response.messageDetail.temp_id = data.temp_id
-          response.isSenderBlocked = isSenderBlocked
-          socketNewMsg(req.app.get('socketio'), response)
-          httpResponse.sendSuccess(res);
-        }
-      });
-  } catch (err) {
-    httpResponse.sendFailer(res, 500);
-  }
-}
-
 export {
   chatCreate, createChatSP, chatDetail, chatUserDetail, chatPaggingListGet, chatListSearchMessage, chatSendMsg, chatMessageGet,
   chatMessageDelete, chatListSearchContact, messageReceiveStstusUpdate, chatMarkAsReadUnread, messageReadAllMessage,
-  messageReceivedAllMessage, chatGetTotalUnreadMsgCount, chatDetailWithUser, chatSendMessageApi
+  messageReceivedAllMessage, chatGetTotalUnreadMsgCount, chatDetailWithUser
 };

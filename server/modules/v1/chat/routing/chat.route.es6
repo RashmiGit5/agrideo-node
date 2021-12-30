@@ -1,7 +1,7 @@
 import {
   chatCreate, chatDetail, chatUserDetail, chatMessageGet, chatPaggingListGet, chatMessageDelete,
   chatListSearchMessage, chatListSearchContact, chatMarkAsReadUnread, chatGetTotalUnreadMsgCount,
-  chatDetailWithUser, chatSendMessageApi
+  chatDetailWithUser
 } from "../services/chat.service";
 import { commonValidator } from '../../common/validators/common.validator';
 import { checkUserToken } from '../../auth/services/auth.service';
@@ -14,8 +14,6 @@ import { checkUserToken } from '../../auth/services/auth.service';
 const chatroute = app => {
 
   app.post("/chat", checkUserToken, commonValidator('v1/schema/chat/chat-list'), chatPaggingListGet);
-
-  app.post("/chat/send-message", chatSendMessageApi);
 
   app.post("/chat/create", checkUserToken, commonValidator('v1/schema/chat/chat-create'), chatCreate);
 
