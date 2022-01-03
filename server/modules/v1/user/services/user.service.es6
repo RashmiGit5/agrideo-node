@@ -18,7 +18,13 @@ const userStatusUpdate = (req, res) => {
     let data = _.assign(req.body, req.query, req.params, req.jwt);
     async.waterfall([
       (callback) => commonModel({ module_name: "USER", method_name: "USER_CHECK_IN_STATUS" }, data, callback),
-      (res, callback) => commonModel({ module_name: "USER", method_name: "USER_UPDATE_STATUS" }, data, callback),
+      (res, callback) => {
+        if (!!res && !!res.user_id) {
+          commonModel({ module_name: "USER", method_name: "USER_UPDATE_STATUS" }, data, callback)
+        } else {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_CREATE" }, { ...data, user_status: data.status }, callback)
+        }
+      }
     ],
       (err, response) => {
         // err if validation fail

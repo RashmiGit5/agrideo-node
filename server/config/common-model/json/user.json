@@ -8,8 +8,7 @@
         }
       ],
       "SQL": "select * from chat_user_status where user_id = ?",
-      "VALIDATION": "NOT_EXISTS",
-      "ERROR_CODE": "USER_NOT_FOUND"
+      "RESULT": "SINGLE"
     },
     "USER_UPDATE_STATUS": {
       "PARAMS": [
