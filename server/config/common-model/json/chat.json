@@ -304,7 +304,7 @@
           "KEY": "user_id"
         }
       ],
-      "SQL": "select * from (SELECT c.user_id, c.friend_id,c.last_msg_at, cma.* FROM chat c INNER JOIN chat_message cma ON cma.id = (SELECT id FROM chat_message cm WHERE ( cm.delete_status = 0 OR cm.delete_status != 3 ) AND ( cm.msg_status != 4 OR ( cm.msg_status = 4 AND cm.sender_id = ? ) ) AND ( ( cm.sender_id = ? AND cm.delete_status != 1 ) OR ( cm.sender_id != ? AND cm.delete_status != 2 ) ) AND ( cm.msg LIKE ? OR cm.attachment_name LIKE ? ) AND cm.chat_id = c.id ORDER  BY id DESC LIMIT  1)) x WHERE x.user_id = ? or x.friend_id = ? ORDER BY x.created_at DESC"
+      "SQL": "SELECT c.*, cma.*, cma.id as msg_id FROM chat c INNER JOIN chat_message cma ON cma.id = (SELECT id FROM chat_message cm WHERE ( cm.delete_status = 0 OR cm.delete_status != 3 ) AND ( cm.msg_status != 4 OR ( cm.msg_status = 4 AND cm.sender_id = ? ) ) AND ( ( cm.sender_id = ? AND cm.delete_status != 1 ) OR ( cm.sender_id != ? AND cm.delete_status != 2 ) ) AND ( cm.msg LIKE ? OR cm.attachment_name LIKE ? ) AND cm.chat_id = c.id ORDER  BY cm.id DESC LIMIT  1) WHERE c.user_id = ? or c.friend_id = ? ORDER  BY cma.created_at DESC"
     },
     "CHAT_LIST_CONTACT_SEARCH": {
       "PARAMS": [
