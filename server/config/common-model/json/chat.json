@@ -544,6 +544,18 @@
       ],
       "SQL": "SELECT count(*) as total_message_count FROM chat_message WHERE chat_id = ? AND sender_id = ? and cast(created_at as Date) = cast(now() as Date);",
       "RESULT": "SINGLE"
+    },
+    "USER_DETAIL_GET": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        }
+      ],
+      "SQL": "SELECT * from fos_user where id = ?",
+      "RESULT": "SINGLE",
+      "VALIDATION": "NOT_EXISTS",
+      "ERROR_CODE": "USER_NOT_FOUND"
     }
   }
 }

@@ -56,7 +56,8 @@ const chatCreate = (req, res) => {
 const createChatSP = (data, callback) => {
   let isChatExist = false
   async.waterfall([
-    (callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_CHECK_EXIST" }, data, callback),
+    (callback) => commonModel({ module_name: "CHAT", method_name: "USER_DETAIL_GET" }, { user_id: data.friend_id }, callback),
+    (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_CHECK_EXIST" }, data, callback),
     (res, callback) => {
       if (res) {
         isChatExist = true
@@ -207,7 +208,7 @@ const chatPaggingListGet = (req, res) => {
                 modifiedChatData.push(chatListData[count])
               }
               count++
-              call(err, res)
+              call(null, res)
             })
           },
           () => {
