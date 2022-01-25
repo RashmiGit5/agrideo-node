@@ -55,6 +55,12 @@ const chatCreate = (req, res) => {
  */
 const createChatSP = (data, callback) => {
   let isChatExist = false
+
+  if (data.friend_id === data.user_id) {
+    callback({ httpCode: 400 }, null)
+    return
+  }
+
   async.waterfall([
     (callback) => commonModel({ module_name: "CHAT", method_name: "USER_DETAIL_GET" }, { user_id: data.friend_id }, callback),
     (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_CHECK_EXIST" }, data, callback),
