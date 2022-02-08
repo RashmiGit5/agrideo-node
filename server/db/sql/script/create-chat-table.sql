@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `chat_message` (
   `sender_id` int(11) NOT NULL,
   `msg_status` tinyint(2) NOT NULL DEFAULT 1 COMMENT '1:sent, 2:received, 3:read, 4:blocked',
   `delete_status` tinyint(2) NOT NULL DEFAULT 0 COMMENT '0:none, 1:deleted for sender, 2:deleted for receiver, 3:deleted for all',
+  `contact_status` tinyint(2) NOT NULL DEFAULT 1 COMMENT '0:non connected, 1:connected',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `modified_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;

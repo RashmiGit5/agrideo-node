@@ -422,12 +422,26 @@ const addMsgInDBAndSocekt = (io, data) => {
         commonModel({ module_name: "CHAT", method_name: "CHAT_USER_STATUS_DETAIL" }, { ...data, user_id: data.sender_id }, (err, resp) => callback(err, { chatDetail: { ...res, chatStatus: resp } }))
       },
       (res, callback) => {
+        commonModel({ module_name: "CHAT", method_name: "CHAT_USER_CONTACT_STATUS" }, { user_id: res.chatDetail.user_id, friend_id: res.chatDetail.friend_id }, (err, resp) => callback(err, { ...res, contactStatus: resp }))
+      },
+      (res, callback) => {
+        if ((res?.contactStatus || []).length < 2) {
+          commonModel({ module_name: "CHAT", method_name: "CHAT_USER_NON_CONTACT_MESSAGE_COUNT" }, data, (err, resp) => {
+            if (parseInt(resp.count) < 30) {
+              callback(err, res)
+            } else {
+              callback({}, null)
+            }
+          })
+        } else {
+          callback(null, res)
+        }
+      },
+      (res, callback) => {
         data.msg_status = isSenderBlocked || !!res.chatDetail.chatStatus.is_blocked ? 4 : 1
         commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp }))
       },
-      (res, callback) => {
-        setTimeout(() => callback(null, res), 100);
-      },
+      (res, callback) => setTimeout(() => callback(null, res), 100),
       (res, callback) => {
         commonModel({ module_name: "CHAT", method_name: "CHAT_MSG_FROM_ID" }, { id: res.messageDetail.insertId }, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp }))
       },

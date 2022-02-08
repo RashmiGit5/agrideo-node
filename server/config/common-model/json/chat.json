@@ -434,6 +434,37 @@
       "SQL": "select * from chat_status where chat_id = ? and user_id != ?",
       "RESULT": "SINGLE"
     },
+    "CHAT_USER_CONTACT_STATUS": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "friend_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "user_id"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "friend_id"
+        }
+      ],
+      "SQL": "select * from contacts where (user_id = ? and friend_id = ?) OR (friend_id = ? and user_id = ?)"
+    },
+    "CHAT_USER_NON_CONTACT_MESSAGE_COUNT": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "sender_id"
+        }
+      ],
+      "SQL": "select count(*) as count from chat_message where sender_id = ? and contact_status = 0 and MONTH(created_at) = MONTH(now()) and YEAR(created_at) = YEAR(now())",
+      "RESULT": "SINGLE"
+    },
     "CHAT_SENDER_STATUS_DETAIL": {
       "PARAMS": [
         {
