@@ -53,6 +53,18 @@ io.on("connection", (socket) => {
 
 app.set('socketio', io);
 
+setTimeout(() => {
+  chatSendMsg(io, {
+    "temp_id": 351635,
+    "chat_id": 487,
+    "sender_id": 321,
+    "msg": `ok 1`,
+    "attachment_url": "",
+    "attachment_type": "",
+    "attachment_name": ""
+  })
+}, 2000);
+
 httpsServer.listen(process.env.SOCKET_PORT || 9005);
 
 app.get('/', function (req, res) {

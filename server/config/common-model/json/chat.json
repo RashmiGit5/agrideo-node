@@ -162,9 +162,13 @@
         {
           "TYPE": "string",
           "KEY": "attachment_name"
+        },
+        {
+          "TYPE": "number",
+          "KEY": "contact_status"
         }
       ],
-      "SQL": "INSERT INTO chat_message (chat_id, msg, attachment_url, attachment_type, sender_id, msg_status, attachment_name) VALUES (?, ?, ?, ?, ?, ?, ?)"
+      "SQL": "INSERT INTO chat_message (chat_id, msg, attachment_url, attachment_type, sender_id, msg_status, attachment_name, contact_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
     },
     "CHAT_UPDATE_LAST_MESSAGE": {
       "PARAMS": [

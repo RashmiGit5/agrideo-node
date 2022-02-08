@@ -438,8 +438,9 @@ const addMsgInDBAndSocekt = (io, data) => {
         }
       },
       (res, callback) => {
+        console.log(res);
         data.msg_status = isSenderBlocked || !!res.chatDetail.chatStatus.is_blocked ? 4 : 1
-        commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, data, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp }))
+        commonModel({ module_name: "CHAT", method_name: "CHAT_SEND_MESSAGE" }, { ...data, contact_status: (res?.contactStatus || []).length < 2 ? 0 : 1 }, (err, resp) => callback(err, { chatDetail: res.chatDetail, messageDetail: resp }))
       },
       (res, callback) => setTimeout(() => callback(null, res), 100),
       (res, callback) => {
