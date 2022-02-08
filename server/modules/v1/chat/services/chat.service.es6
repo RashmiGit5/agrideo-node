@@ -497,7 +497,7 @@ const chatMessageGet = (req, res) => {
       (res, callback) => {
         if (res.contactStatus.length < 2) {
           res.contacts_id = null
-          commonModel({ module_name: "CHAT", method_name: "CHAT_USER_NON_CONTACT_MESSAGE_COUNT" }, data, (err, response) => callback(err, { ...res, total_message_count: response.count }))
+          commonModel({ module_name: "CHAT", method_name: "CHAT_USER_NON_CONTACT_MESSAGE_COUNT" }, { sender_id: data.user_id }, (err, response) => callback(err, { ...res, total_message_count: response.count }))
         } else {
           callback(null, { ...res, total_message_count: null })
         }
