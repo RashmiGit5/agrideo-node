@@ -455,6 +455,15 @@
       ],
       "SQL": "select * from contacts where (user_id = ? and friend_id = ?) OR (friend_id = ? and user_id = ?)"
     },
+    "CHAT_USER_CONTACT_STATUS_FROM_CHAT_ID": {
+      "PARAMS": [
+        {
+          "TYPE": "number",
+          "KEY": "chat_id"
+        }
+      ],
+      "SQL": "select * from contacts inner join chat on chat.id = ? where (contacts.user_id = chat.user_id and contacts.friend_id = chat.friend_id) OR (contacts.friend_id = chat.user_id and contacts.user_id = chat.friend_id)"
+    },
     "CHAT_USER_NON_CONTACT_MESSAGE_COUNT": {
       "PARAMS": [
         {

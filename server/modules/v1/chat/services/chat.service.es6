@@ -493,9 +493,11 @@ const chatMessageGet = (req, res) => {
       (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_COUNT_GET" }, data, callback),
       (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_GET" }, data, (err, response) => callback(err, { page_index: req.body.page_index, count: res.count, chat: response })),
       (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL_WITH_USER" }, data, (err, response) => callback(err, { ...res, contacts_id: response.contacts_id })),
+      (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_USER_CONTACT_STATUS_FROM_CHAT_ID" }, data, (err, resp) => callback(err, { ...res, contactStatus: resp })),
       (res, callback) => {
-        if (!res.contacts_id) {
-          commonModel({ module_name: "CHAT", method_name: "CHAT_MESSAGE_TODAY_COUNT_GET" }, data, (err, response) => callback(err, { ...res, total_message_count: response.total_message_count }))
+        if (res.contactStatus.length < 2) {
+          res.contacts_id = null
+          commonModel({ module_name: "CHAT", method_name: "CHAT_USER_NON_CONTACT_MESSAGE_COUNT" }, data, (err, response) => callback(err, { ...res, total_message_count: response.count }))
         } else {
           callback(null, { ...res, total_message_count: null })
         }
@@ -507,6 +509,7 @@ const chatMessageGet = (req, res) => {
           httpResponse.sendFailer(res, err.code, err);
           return;
         } else {
+          response.contactStatus = undefined
           httpResponse.sendSuccess(res, response);
         }
       });
