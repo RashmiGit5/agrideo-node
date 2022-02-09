@@ -65,7 +65,7 @@
           "KEY": "chat_id"
         }
       ],
-      "SQL": "select * from chat where chat.id = ?",
+      "SQL": "select chat.*, contacts.id as contacts_id from chat left join contacts on (contacts.user_id = chat.user_id and contacts.friend_id = chat.friend_id) OR (contacts.friend_id = chat.user_id and contacts.user_id = chat.friend_id) where chat.id = ?",
       "RESULT": "SINGLE",
       "VALIDATION": "NOT_EXISTS",
       "ERROR_CODE": "DATA_NOT_FOUND"

@@ -119,6 +119,12 @@ const createChatSP = (data, callback) => {
     (res, callback) => {
       commonModel({ module_name: "CHAT", method_name: "CHAT_DETAIL" }, { chat_id: res.insertId || res.id }, callback)
     },
+    (res, callback) => commonModel({ module_name: "CHAT", method_name: "CHAT_USER_CONTACT_STATUS_FROM_CHAT_ID" }, { chat_id: res.insertId || res.id }, (err, resp) => {
+      if (resp.length < 2) {
+        res.contacts_id = null
+      }
+      callback(err, res)
+    }),
     (res, callback) => {
       commonModel({ module_name: "CHAT", method_name: "CHAT_USER_DETAIL" }, { chat_id: res.insertId || res.id, user_chat_id: data.friend_id }, (err, response) => {
         if (err) {
