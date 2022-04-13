@@ -3,20 +3,20 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import path from "path";
 import apiV1 from "./apis/v1";
-import { createServer } from "https";
+import { createServer } from "http";
 import { Server } from "socket.io";
 import fs from "fs"
 require('dotenv').config()
 
-const key = fs.readFileSync(process.env.PATH_HTTPS_KEY);
-const cert = fs.readFileSync(process.env.PATH_HTTPS_CERT);
+// const key = fs.readFileSync(process.env.PATH_HTTPS_KEY);
+// const cert = fs.readFileSync(process.env.PATH_HTTPS_CERT);
 
 import { chatSendMsg, messageReceiveStstusUpdate, messageReadAllMessage, messageReceivedAllMessage } from "./modules/v1/chat/services/chat.service"
 
 const port = process.env.API_PORT || 5000;
 
 const app = express();
-const httpsServer = createServer({ key, cert }, app);
+const httpsServer = createServer({  }, app);
 const io = new Server(httpsServer, {
   pingInterval: 25000,
   pingTimeout: 60000,
@@ -56,10 +56,10 @@ app.set('socketio', io);
 httpsServer.listen(process.env.SOCKET_PORT || 9005);
 
 app.get('/', function (req, res) {
-  // res.sendFile('/Users/mini-1/Projects/Agrido/index.html');
-  res.writeHead(200, { 'Content-Type': 'text/html' });
-  res.write('<html><body><p>This is home Page.</p></body></html>');
-  res.end();
+  res.sendFile('index.html', { root: '.' });
+  // res.writeHead(200, { 'Content-Type': 'text/html' });
+  // res.write('<html><body><p>This is home Page.</p></body></html>');
+  // res.end();
 });
 
 // 3rd party middleware

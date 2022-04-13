@@ -19,9 +19,8 @@ const commonModel = (type, data, callback) => {
 
     let sqlQuery = '';
     let sqlParams = [];
-
     if (MULTI) {
-      data.multi.forEach(a => {
+      data.multi.forEach(a => {       
         const { sql, params } = makeSqlParams(COMMON[type.module_name][type.method_name], _.assign(a, data.common));
         sqlQuery += sql;
         sqlParams = sqlParams.concat(params);
@@ -31,7 +30,8 @@ const commonModel = (type, data, callback) => {
       sqlQuery = sql;
       sqlParams = params;
     }
-
+    console.log(sqlQuery)
+    console.log(sqlParams)
     exec(sqlQuery, sqlParams, function (err, result, error_detail) {
       if (err) {
         return callback(err, []);
